@@ -99,6 +99,11 @@ public class ShipmentService {
         return trackingEventRepository.findByShipmentIdOrderByOccurredAtAscIdAsc(shipmentId);
     }
 
+    public List<TrackingEvent> getHistoryByTrackingCode(String trackingCode) {
+        Shipment shipment = findByTrackingCode(trackingCode);
+        return getHistory(shipment.getId());
+    }
+
     private String generateTrackingCode() {
         return "TF" + UUID.randomUUID().toString().substring(0, 10).toUpperCase().replace("-", "");
     }
