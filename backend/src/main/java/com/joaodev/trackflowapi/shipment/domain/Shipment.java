@@ -34,7 +34,7 @@ public class Shipment {
     private String status;
 
     @Column(name = "created_at", nullable = false)
-    private LocalDateTime cratedAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
