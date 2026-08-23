@@ -104,6 +104,10 @@ public class ShipmentService {
         return getHistory(shipment.getId());
     }
 
+    public List<Shipment> findAll() {
+        return shipmentRepository.findAll();
+    }
+
     private String generateTrackingCode() {
         return "TF" + UUID.randomUUID().toString().substring(0, 10).toUpperCase().replace("-", "");
     }

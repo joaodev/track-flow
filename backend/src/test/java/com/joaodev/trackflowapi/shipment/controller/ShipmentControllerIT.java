@@ -18,7 +18,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 
 import java.util.Map;
-import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -98,6 +97,27 @@ public class ShipmentControllerIT {
                 "/api/shipments", HttpMethod.POST, withAuth(invalid, token), Map.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void listingShipmentsRequiresAuthentication() {
+        ResponseEntity<?> response = restTemplate.getForEntity("/api/shipments", Map.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    void authenticatedUserCanListShipments() {
+        String token = adminToken();
+
+        restTemplate.exchange("/api/shipments", HttpMethod.POST,
+                withAuth(new CreateShipmentRequest(
+                        "Curitiba", "Joinville", "Correios"), token), Shipment.class);
+
+        ResponseEntity<Shipment[]> response = restTemplate.exchange(
+                "/api/shipments", HttpMethod.GET, withAuth(null, token), Shipment[].class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotEmpty();
     }
 
     private String adminToken() {

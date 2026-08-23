@@ -45,4 +45,9 @@ public class ShipmentController {
     public List<TrackingEvent> getHistory(@PathVariable String trackingCode) {
         return shipmentService.getHistoryByTrackingCode(trackingCode);
     }
+
+    @GetMapping
+    public List<Shipment> listShipments() {
+        return shipmentService.findAll();
+    }
 }
