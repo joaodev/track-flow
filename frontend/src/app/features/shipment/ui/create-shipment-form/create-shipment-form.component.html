@@ -1,0 +1,27 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <mat-form-field appearance="outline">
+    <mat-label>Origin</mat-label>
+    <input matInput formControlName="origin" />
+    @if (form.controls.origin.invalid && form.controls.origin.touched) {
+      <mat-error>Origin is required</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Destination</mat-label>
+    <input matInput formControlName="destination" />
+    @if (form.controls.destination.invalid && form.controls.destination.touched) {
+      <mat-error>Destination is required</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Carrier</mat-label>
+    <input matInput formControlName="carrier" />
+    @if (form.controls.carrier.invalid && form.controls.carrier.touched) {
+      <mat-error>Carrier is required</mat-error>
+    }
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" type="submit">Create Shipment</button>
+</form>
