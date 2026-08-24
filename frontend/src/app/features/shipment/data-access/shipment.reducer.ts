@@ -1,0 +1,65 @@
+import { createEntityAdapter, EntityState } from '@ngrx/entity';
+import { Shipment, TrackingEvent } from './shipment.model';
+import { createFeature, createReducer, on } from '@ngrx/store';
+import { ShipmentActions } from './shipment.actions';
+
+export interface ShipmentState extends EntityState<Shipment> {
+  history: TrackingEvent[];
+  loading: boolean;
+  error: string | null;
+}
+
+export const shipmentAdapter = createEntityAdapter<Shipment>({
+  selectId: (shipment) => shipment.trackingCode,
+});
+
+export const initialState: ShipmentState = shipmentAdapter.getInitialState({
+  history: [],
+  loading: false,
+  error: null,
+});
+
+export const shipmentFeature = createFeature({
+  name: 'shipment',
+  reducer: createReducer(
+    initialState,
+
+    on(
+      ShipmentActions.loadShipments,
+      ShipmentActions.createShipment,
+      ShipmentActions.updateShipmentStatus,
+      ShipmentActions.loadHistory,
+      (state): ShipmentState => ({ ...state, loading: true, error: null })
+    ),
+
+    on(ShipmentActions.loadShipmentsSuccess, (state, { shipments }): ShipmentState =>
+      shipmentAdapter.setAll(shipments, { ...state, loading: false })
+    ),
+
+    on(ShipmentActions.createShipmentSuccess, (state, { shipment }): ShipmentState =>
+      shipmentAdapter.addOne(shipment, { ...state, loading: false })
+    ),
+
+    on(ShipmentActions.updateShipmentStatusSuccess, (state, { shipment }): ShipmentState =>
+      shipmentAdapter.upsertOne(shipment, { ...state, loading: false })
+    ),
+
+    on(ShipmentActions.loadHistorySuccess, (state, { history }): ShipmentState => ({
+      ...state,
+      history,
+      loading: false,
+    })),
+
+    on(
+      ShipmentActions.loadShipmentsFailure,
+      ShipmentActions.createShipmentFailure,
+      ShipmentActions.updateShipmentStatusFailure,
+      ShipmentActions.loadHistoryFailure,
+      (state, { error }): ShipmentState => ({
+        ...state,
+        loading: false,
+        error
+      })
+    )
+  ),
+});
