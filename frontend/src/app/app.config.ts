@@ -6,16 +6,20 @@ import { provideEffects } from '@ngrx/effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { shipmentFeature } from './features/shipment/data-access/shipment.reducer';
 import { ShipmentEffects } from './features/shipment/data-access/shipment.effects';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { authFeature } from './features/auth/data-access/auth.reducer';
+import { AuthEffects } from './features/auth/data-access/auth.effects';
+import { authInterceptor } from './features/auth/data-access/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([authInterceptor])),
     provideStore(),
     provideState(shipmentFeature),
-    provideEffects(ShipmentEffects),
+    provideState(authFeature),
+    provideEffects(ShipmentEffects, AuthEffects),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
   ],
 };

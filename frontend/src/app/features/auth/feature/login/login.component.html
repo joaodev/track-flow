@@ -1,0 +1,9 @@
+<div class="login-page">
+  <h1>Track Flow — Operations Login</h1>
+
+  @if (error$ | async; as error) {
+    <p>{{ error }}</p>
+  }
+
+  <app-login-form (login)="onLogin($event)" />
+</div>
