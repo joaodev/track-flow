@@ -4,6 +4,9 @@
     <button mat-raised-button color="primary" (click)="toggleCreateForm()">
       {{ showCreateForm() ? 'Cancel' : 'New Shipment' }}
     </button>
+    @if (isAdmin$ | async) {
+      <a routerLink="/admin/users">Manage Users</a>
+    }
   </header>
 
   @if (showCreateForm()) {

@@ -1,0 +1,22 @@
+<div class="user-management-page">
+  <header>
+    <h1>User Management</h1>
+    <button mat-raised-button color="primary" (click)="toggleCreateForm()">
+      {{ showCreateForm() ? 'Cancel' : 'New User' }}
+    </button>
+  </header>
+
+  @if (showCreateForm()) {
+    <app-create-user-form (create)="onCreate($event)" />
+  }
+
+  @if (error$ | async; as error) {
+    <p>{{ error }}</p>
+  }
+
+  <app-user-table
+    [users]="(users$ | async) ?? []"
+    (changeRole)="onChangeRole($event)"
+    (toggleActive)="onToggleActive($event)"
+  />
+</div>

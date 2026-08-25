@@ -10,6 +10,8 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authFeature } from './features/auth/data-access/auth.reducer';
 import { AuthEffects } from './features/auth/data-access/auth.effects';
 import { authInterceptor } from './features/auth/data-access/auth.interceptor';
+import { userFeature } from './features/user/data-access/user.reducer';
+import { UserEffects } from './features/user/data-access/user.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,7 +21,8 @@ export const appConfig: ApplicationConfig = {
     provideStore(),
     provideState(shipmentFeature),
     provideState(authFeature),
-    provideEffects(ShipmentEffects, AuthEffects),
+    provideState(userFeature),
+    provideEffects(ShipmentEffects, AuthEffects, UserEffects),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
   ],
 };

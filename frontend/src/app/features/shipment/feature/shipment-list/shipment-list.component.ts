@@ -13,11 +13,19 @@ import {
 import { CreateShipmentRequest, Shipment, UpdateShipmentStatusRequest } from '../../data-access/shipment.model';
 import { MatDialog } from '@angular/material/dialog';
 import { UpdateStatusFormComponent } from '../../ui/update-status-form/update-status-form.component';
+import { RouterLink } from '@angular/router';
+import { selectIsAdmin } from '../../../auth/data-access/auth.selectors';
 
 @Component({
   selector: 'app-shipment-list',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, ShipmentTableComponent, CreateShipmentFormComponent],
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    ShipmentTableComponent,
+    CreateShipmentFormComponent,
+    RouterLink,
+  ],
   templateUrl: './shipment-list.component.html',
 })
 export class ShipmentListComponent implements OnInit {
@@ -27,6 +35,7 @@ export class ShipmentListComponent implements OnInit {
   shipments$ = this.store.select(selectAllShipments);
   loading$ = this.store.select(selectLoading);
   error$ = this.store.select(selectError);
+  isAdmin$ = this.store.select(selectIsAdmin);
 
   showCreateForm = signal(false);
 
@@ -53,9 +62,10 @@ export class ShipmentListComponent implements OnInit {
       if (request) {
         this.store.dispatch(
           ShipmentActions.updateShipmentStatus({
-            trackingCode: shipment.trackingCode, request
-          })
-        )
+            trackingCode: shipment.trackingCode,
+            request,
+          }),
+        );
       }
     });
   }
