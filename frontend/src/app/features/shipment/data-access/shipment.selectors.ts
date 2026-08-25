@@ -6,3 +6,7 @@ export const { selectShipmentState, selectHistory, selectLoading, selectError} =
 const { selectAll } = shipmentAdapter.getSelectors();
 
 export const selectAllShipments = createSelector(selectShipmentState, selectAll);
+
+export const selectShipmentByTrackingCode = (trackingCode: string) =>
+  createSelector(selectShipmentState, (state) =>
+    shipmentAdapter.getSelectors().selectEntities(state)[trackingCode]);

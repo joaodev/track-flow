@@ -1,0 +1,16 @@
+<ul class="tracking-timeline">
+  @for (event of events; track event.id) {
+    <li>
+      <strong>{{ event.status }}</strong>
+      <span>{{ event.occurredAt | date: 'medium' }}</span>
+      @if (event.location) {
+        <p>{{ event.location }}</p>
+      }
+      @if (event.description) {
+        <p>{{ event.description }}</p>
+      }
+    </li>
+  } @empty {
+    <li>No tracking history yet.</li>
+  }
+</ul>

@@ -77,8 +77,34 @@ export class ShipmentEffects {
   watchNewShipment$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ShipmentActions.createShipmentSuccess),
-      mergeMap(({ shipment }) =>  this.socketService.watch(shipment.trackingCode)),
-      map((event) => ShipmentActions.shipmentStatusReceived({ event }))
-    )
+      mergeMap(({ shipment }) => this.socketService.watch(shipment.trackingCode)),
+      map((event) => ShipmentActions.shipmentStatusReceived({ event })),
+    ),
+  );
+
+  loadShipment$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ShipmentActions.loadShipment),
+      mergeMap(({ trackingCode }) =>
+        this.shipmentService.getByTrackingCode(trackingCode).pipe(
+          map((shipment) => ShipmentActions.loadShipmentSuccess({ shipment })),
+          catchError((error) =>
+            of(
+              ShipmentActions.loadShipmentFailure({
+                error: error.error?.message ?? 'Shipment not found',
+              }),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  watchLoadedShipment$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ShipmentActions.loadShipmentSuccess),
+      mergeMap(({ shipment }) => this.socketService.watch(shipment.trackingCode)),
+      map((event) => ShipmentActions.shipmentStatusReceived({ event })),
+    ),
   );
 }

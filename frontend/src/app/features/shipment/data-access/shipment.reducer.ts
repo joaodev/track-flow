@@ -36,6 +36,22 @@ export const shipmentFeature = createFeature({
       shipmentAdapter.setAll(shipments, { ...state, loading: false }),
     ),
 
+    on(ShipmentActions.loadShipment, (state): ShipmentState => ({
+      ...state,
+      loading: true,
+      error: null,
+    })),
+
+    on(ShipmentActions.loadShipmentSuccess, (state, { shipment }): ShipmentState =>
+      shipmentAdapter.upsertOne(shipment, { ...state, loading: false }),
+    ),
+
+    on(ShipmentActions.loadShipmentFailure, (state, { error }): ShipmentState => ({
+      ...state,
+      loading: false,
+      error,
+    })),
+
     on(ShipmentActions.createShipmentSuccess, (state, { shipment }): ShipmentState =>
       shipmentAdapter.addOne(shipment, { ...state, loading: false }),
     ),
