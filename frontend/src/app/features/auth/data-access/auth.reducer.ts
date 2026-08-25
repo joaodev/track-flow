@@ -1,5 +1,6 @@
 import { createFeature, createReducer, on } from '@ngrx/store';
 import { AuthActions } from './auth.actions';
+import { TOKEN_KEY } from '../../../core/token-storage.service';
 
 export interface AuthState {
   token: string | null;
@@ -8,7 +9,7 @@ export interface AuthState {
 }
 
 export const initialState: AuthState = {
-  token: null,
+  token: localStorage.getItem(TOKEN_KEY),
   loading: false,
   error: null
 };

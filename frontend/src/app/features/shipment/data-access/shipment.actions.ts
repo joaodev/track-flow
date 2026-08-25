@@ -5,6 +5,7 @@ import {
   TrackingEvent,
   UpdateShipmentStatusRequest,
 } from './shipment.model';
+import { ShipmentStatusChangedEvent } from './shipment-status-changed-event.model';
 
 export const ShipmentActions = createActionGroup({
   source: 'Shipment',
@@ -20,6 +21,7 @@ export const ShipmentActions = createActionGroup({
     'Update Shipment Status': props<{ trackingCode: string; request: UpdateShipmentStatusRequest }>(),
     'Update Shipment Status Success': props<{ shipment: Shipment }>(),
     'Update Shipment Status Failure': props<{ error: string }>(),
+    'Shipment Status Received': props<{ event: ShipmentStatusChangedEvent }>(),
 
     'Load History': props<{ trackingCode: string }>(),
     'Load History Success': props<{ history: TrackingEvent[] }>(),

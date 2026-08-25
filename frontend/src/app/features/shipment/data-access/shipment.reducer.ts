@@ -29,19 +29,32 @@ export const shipmentFeature = createFeature({
       ShipmentActions.createShipment,
       ShipmentActions.updateShipmentStatus,
       ShipmentActions.loadHistory,
-      (state): ShipmentState => ({ ...state, loading: true, error: null })
+      (state): ShipmentState => ({ ...state, loading: true, error: null }),
     ),
 
     on(ShipmentActions.loadShipmentsSuccess, (state, { shipments }): ShipmentState =>
-      shipmentAdapter.setAll(shipments, { ...state, loading: false })
+      shipmentAdapter.setAll(shipments, { ...state, loading: false }),
     ),
 
     on(ShipmentActions.createShipmentSuccess, (state, { shipment }): ShipmentState =>
-      shipmentAdapter.addOne(shipment, { ...state, loading: false })
+      shipmentAdapter.addOne(shipment, { ...state, loading: false }),
     ),
 
     on(ShipmentActions.updateShipmentStatusSuccess, (state, { shipment }): ShipmentState =>
-      shipmentAdapter.upsertOne(shipment, { ...state, loading: false })
+      shipmentAdapter.upsertOne(shipment, { ...state, loading: false }),
+    ),
+
+    on(ShipmentActions.shipmentStatusReceived, (state, { event }): ShipmentState =>
+      shipmentAdapter.updateOne(
+        {
+          id: event.trackingCode,
+          changes: {
+            status: event.newStatus,
+            updatedAt: event.occurredAt,
+          },
+        },
+        state,
+      ),
     ),
 
     on(ShipmentActions.loadHistorySuccess, (state, { history }): ShipmentState => ({
@@ -58,8 +71,8 @@ export const shipmentFeature = createFeature({
       (state, { error }): ShipmentState => ({
         ...state,
         loading: false,
-        error
-      })
-    )
+        error,
+      }),
+    ),
   ),
 });

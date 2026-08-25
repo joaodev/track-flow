@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
@@ -7,12 +7,12 @@ import {
   TrackingEvent,
   UpdateShipmentStatusRequest,
 } from './shipment.model';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ShipmentService {
-  private readonly  baseUrl = '/api/shipments';
-
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
+  private readonly baseUrl = `${environment.apiUrl}/api/shipments`;
 
   getAll(): Observable<Shipment[]> {
     return this.http.get<Shipment[]>(this.baseUrl);

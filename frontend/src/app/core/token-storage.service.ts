@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-const TOKEN_KEY = 'track_flow_token';
+export const TOKEN_KEY = 'track_flow_token';
 
 @Injectable({ providedIn: 'root' })
 export class TokenStorageService {
