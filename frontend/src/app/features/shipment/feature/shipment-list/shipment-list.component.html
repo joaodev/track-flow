@@ -14,5 +14,9 @@
     <p>{{ error }}</p>
   }
 
-  <app-shipment-table [shipments]="(shipments$ | async) ?? []" [loading]="(loading$ | async) ?? false" />
+  <app-shipment-table
+    [shipments]="(shipments$ | async) ?? []"
+    [loading]="(loading$ | async) ?? false"
+    (updateStatus)="onUpdateStatus($event)"
+  />
 </div>

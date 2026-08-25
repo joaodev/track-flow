@@ -10,7 +10,9 @@ import {
   selectError,
   selectLoading,
 } from '../../data-access/shipment.selectors';
-import { CreateShipmentRequest } from '../../data-access/shipment.model';
+import { CreateShipmentRequest, Shipment, UpdateShipmentStatusRequest } from '../../data-access/shipment.model';
+import { MatDialog } from '@angular/material/dialog';
+import { UpdateStatusFormComponent } from '../../ui/update-status-form/update-status-form.component';
 
 @Component({
   selector: 'app-shipment-list',
@@ -20,6 +22,7 @@ import { CreateShipmentRequest } from '../../data-access/shipment.model';
 })
 export class ShipmentListComponent implements OnInit {
   private store = inject(Store);
+  private dialog = inject(MatDialog);
 
   shipments$ = this.store.select(selectAllShipments);
   loading$ = this.store.select(selectLoading);
@@ -38,5 +41,22 @@ export class ShipmentListComponent implements OnInit {
   onCreate(request: CreateShipmentRequest): void {
     this.store.dispatch(ShipmentActions.createShipment({ request }));
     this.showCreateForm.set(false);
+  }
+
+  onUpdateStatus(shipment: Shipment): void {
+    const dialogRef = this.dialog.open(UpdateStatusFormComponent, {
+      data: { trackingCode: shipment.trackingCode, currentStatus: shipment.status },
+      width: '400px',
+    });
+
+    dialogRef.afterClosed().subscribe((request: UpdateShipmentStatusRequest | undefined) => {
+      if (request) {
+        this.store.dispatch(
+          ShipmentActions.updateShipmentStatus({
+            trackingCode: shipment.trackingCode, request
+          })
+        )
+      }
+    });
   }
 }

@@ -32,6 +32,13 @@
       <td mat-cell *matCellDef="let shipment">{{ shipment.updatedAt | date: 'short' }}</td>
     </ng-container>
 
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let shipment">
+        <button mat-button color="primary" (click)="updateStatus.emit(shipment)">Update Status</button>
+      </td>
+    </ng-container>
+
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
