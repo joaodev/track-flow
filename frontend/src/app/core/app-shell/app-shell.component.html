@@ -1,34 +1,55 @@
-<div class="shell">
-  <aside class="sidebar">
-    <div class="sidebar-brand">
-      <mat-icon>local_shipping</mat-icon>
-      <span>Track Flow</span>
-    </div>
+<mat-sidenav-container class="shell">
+  <mat-sidenav
+    #drawer
+    class="sidebar"
+    [mode]="isMobile() ? 'over' : 'side'"
+    [opened]="!isMobile()"
+    [fixedInViewport]="isMobile()"
+  >
+    <div class="sidebar-inner">
+      <div class="sidebar-brand">
+        <mat-icon>local_shipping</mat-icon>
+        <span>Track Flow</span>
+      </div>
 
-    <nav class="sidebar-nav">
-      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-        <mat-icon>inventory_2</mat-icon>
-        <span>Shipments</span>
-      </a>
-      <a routerLink="/track" routerLinkActive="active">
-        <mat-icon>search</mat-icon>
-        <span>Track</span>
-      </a>
-      @if (isAdmin$ | async) {
-        <a routerLink="/admin/users" routerLinkActive="active">
-          <mat-icon>group</mat-icon>
-          <span>Users</span>
+      <nav class="sidebar-nav">
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="isMobile() && drawer.close()">
+          <mat-icon>inventory_2</mat-icon>
+          <span>Shipments</span>
         </a>
-      }
-    </nav>
+        <a routerLink="/track" routerLinkActive="active" (click)="isMobile() && drawer.close()">
+          <mat-icon>search</mat-icon>
+          <span>Track</span>
+        </a>
+        @if (isAdmin$ | async) {
+          <a routerLink="/admin/users" routerLinkActive="active" (click)="isMobile() && drawer.close()">
+            <mat-icon>group</mat-icon>
+            <span>Users</span>
+          </a>
+        }
+      </nav>
 
-    <button class="sidebar-logout" (click)="onLogout()">
-      <mat-icon>logout</mat-icon>
-      <span>Log Out</span>
-    </button>
-  </aside>
+      <button class="sidebar-logout" (click)="onLogout()">
+        <mat-icon>logout</mat-icon>
+        <span>Log Out</span>
+      </button>
+    </div>
+  </mat-sidenav>
 
-  <div class="shell-main">
-    <router-outlet />
-  </div>
-</div>
+  <mat-sidenav-content>
+    @if (isMobile()) {
+      <mat-toolbar class="mobile-toolbar">
+        <button mat-icon-button (click)="drawer.toggle()">
+          <mat-icon>menu</mat-icon>
+        </button>
+        <span class="mobile-toolbar-brand">
+          <mat-icon>local_shipping</mat-icon>
+          Track Flow
+        </span>
+      </mat-toolbar>
+    }
+    <div class="shell-main">
+      <router-outlet />
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

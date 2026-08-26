@@ -76,6 +76,13 @@ table {
   vertical-align: middle;
 }
 
+.actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
 @keyframes pulse-flash {
   0% { background-color: color-mix(in srgb, var(--card-amber) 25%, transparent); }
   100% { background-color: transparent; }

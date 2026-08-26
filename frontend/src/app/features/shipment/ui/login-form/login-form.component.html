@@ -1,7 +1,7 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <mat-form-field appearance="outline">
     <mat-label>Email</mat-label>
-    <input matInput formControlName="email" type="email" />
+    <input matInput formControlName="email" type="email" autocomplete="username" />
     @if (form.controls.email.invalid && form.controls.email.touched) {
       <mat-error>A valid email is required</mat-error>
     }
@@ -9,7 +9,21 @@
 
   <mat-form-field appearance="outline">
     <mat-label>Password</mat-label>
-    <input matInput formControlName="password" type="password" />
+    <input
+      matInput
+      formControlName="password"
+      [type]="hidePassword ? 'password' : 'text'"
+      autocomplete="current-password"
+    />
+    <button
+      mat-icon-button
+      matSuffix
+      type="button"
+      (click)="togglePasswordVisibility()"
+      [attr.aria-label]="hidePassword ? 'Show password' : 'Hide password'"
+    >
+      <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+    </button>
     @if (form.controls.password.invalid && form.controls.password.touched) {
       <mat-error>Password is required</mat-error>
     }

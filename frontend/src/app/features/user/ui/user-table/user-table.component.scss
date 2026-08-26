@@ -29,3 +29,14 @@ mat-paginator {
   margin-top: 8px;
   background: transparent;
 }
+
+.col-center {
+  text-align: center;
+}
+
+.actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
