@@ -120,6 +120,83 @@ public class ShipmentControllerIT {
         assertThat(response.getBody()).isNotEmpty();
     }
 
+    @Test
+    void adminCanDeleteShipment() {
+        String token = adminToken();
+
+        ResponseEntity<Shipment> createResponse = restTemplate.exchange(
+                "/api/shipments", HttpMethod.POST,
+                withAuth(new CreateShipmentRequest("Vitória", "Cariacica", "Correios"), token), Shipment.class);
+
+        assert createResponse.getBody() != null;
+        String trackingCode = createResponse.getBody().getTrackingCode();
+
+        ResponseEntity<Void> deleteResponse = restTemplate.exchange(
+                "/api/shipments/" + trackingCode, HttpMethod.DELETE, withAuth(null, token), Void.class);
+
+        assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        ResponseEntity<?> getResponse = restTemplate.getForEntity("/api/shipments/" + trackingCode, Map.class);
+        assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    void deletedShipmentDoesNotAppearInList() {
+        String token = adminToken();
+
+        ResponseEntity<Shipment> createResponse = restTemplate.exchange(
+                "/api/shipments", HttpMethod.POST,
+                withAuth(new CreateShipmentRequest("Natal", "João Pessoa", "Jadlog"), token), Shipment.class);
+
+        assert createResponse.getBody() != null;
+        String trackingCode = createResponse.getBody().getTrackingCode();
+
+        restTemplate.exchange("/api/shipments/" + trackingCode, HttpMethod.DELETE, withAuth(null, token), Void.class);
+
+        ResponseEntity<Shipment[]> listResponse = restTemplate.exchange(
+                "/api/shipments", HttpMethod.GET, withAuth(null, token), Shipment[].class);
+
+        assertThat(listResponse.getBody())
+                .extracting(Shipment::getTrackingCode)
+                .doesNotContain(trackingCode);
+    }
+
+    @Test
+    void deletingNonExistentShipmentReturnsNotFound() {
+        String token = adminToken();
+
+        ResponseEntity<?> response = restTemplate.exchange(
+                "/api/shipments/TFNOTFOUND01", HttpMethod.DELETE, withAuth(null, token), Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    void nonAdminCannotDeleteShipment() {
+        String adminToken = adminToken();
+        String opsEmail = "ops-" + java.util.UUID.randomUUID() + "@trackflow.dev";
+
+        restTemplate.exchange("/api/users", HttpMethod.POST,
+                withAuth(new com.joaodev.trackflowapi.auth.dto.CreateUserRequest(
+                        opsEmail, "password123", "OPS"), adminToken), Object.class);
+
+        AuthResponse opsLogin = restTemplate.postForObject(
+                "/api/auth/login", new LoginRequest(opsEmail, "password123"), AuthResponse.class);
+        assert opsLogin != null;
+
+        ResponseEntity<Shipment> createResponse = restTemplate.exchange(
+                "/api/shipments", HttpMethod.POST,
+                withAuth(new CreateShipmentRequest("Manaus", "Belém", "Correios"), adminToken), Shipment.class);
+
+        assert createResponse.getBody() != null;
+        String trackingCode = createResponse.getBody().getTrackingCode();
+
+        ResponseEntity<?> response = restTemplate.exchange(
+                "/api/shipments/" + trackingCode, HttpMethod.DELETE, withAuth(null, opsLogin.token()), Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    }
+
     private String adminToken() {
         LoginRequest request = new LoginRequest("admin@trackflow.dev", "ChangeMe123!");
         AuthResponse response = restTemplate.postForObject("/api/auth/login", request, AuthResponse.class);

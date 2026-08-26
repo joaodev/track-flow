@@ -4,6 +4,7 @@ import com.joaodev.trackflowapi.shipment.domain.Shipment;
 import com.joaodev.trackflowapi.shipment.domain.TrackingEvent;
 import com.joaodev.trackflowapi.shipment.dto.CreateShipmentRequest;
 import com.joaodev.trackflowapi.shipment.dto.UpdateShipmentStatusRequest;
+import com.joaodev.trackflowapi.shipment.event.ShipmentDeletedEvent;
 import com.joaodev.trackflowapi.shipment.event.ShipmentStatusChangedEvent;
 import com.joaodev.trackflowapi.shipment.repository.ShipmentRepository;
 import com.joaodev.trackflowapi.shipment.repository.TrackingEventRepository;
@@ -40,6 +41,7 @@ public class ShipmentService {
                 .destination(request.destination())
                 .carrier(request.carrier())
                 .status("CREATED")
+                .deleted(false)
                 .createdAt(now)
                 .updatedAt(now)
                 .build();
@@ -59,8 +61,7 @@ public class ShipmentService {
 
     @Transactional
     public Shipment updateStatus(String trackingCode, UpdateShipmentStatusRequest request) {
-        Shipment shipment = shipmentRepository.findByTrackingCode(trackingCode)
-                .orElseThrow(() -> new ShipmentNotFoundException(trackingCode));
+        Shipment shipment = findByTrackingCode(trackingCode);
 
         String previousStatus = shipment.getStatus();
         LocalDateTime now = LocalDateTime.now();
@@ -90,8 +91,24 @@ public class ShipmentService {
         return saved;
     }
 
+    @Transactional
+    public void deleteShipment(String trackingCode) {
+        Shipment shipment = findByTrackingCode(trackingCode);
+        LocalDateTime now = LocalDateTime.now();
+
+        shipment.setDeleted(true);
+        shipment.setUpdatedAt(now);
+        shipmentRepository.save(shipment);
+
+        eventPublisher.publishEvent(new ShipmentDeletedEvent(
+                shipment.getId(),
+                shipment.getTrackingCode(),
+                now
+        ));
+    }
+
     public Shipment findByTrackingCode(String trackingCode) {
-        return shipmentRepository.findByTrackingCode(trackingCode)
+        return shipmentRepository.findByTrackingCodeAndDeletedFalse(trackingCode)
                 .orElseThrow(() -> new ShipmentNotFoundException(trackingCode));
     }
 
@@ -105,7 +122,7 @@ public class ShipmentService {
     }
 
     public List<Shipment> findAll() {
-        return shipmentRepository.findAll();
+        return shipmentRepository.findByDeletedFalseOrderByCreatedAtDesc();
     }
 
     private String generateTrackingCode() {

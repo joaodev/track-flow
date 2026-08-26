@@ -45,7 +45,7 @@ class UserControllerIT {
                 "admin@trackflow.dev", "ChangeMe123!");
         AuthResponse response = restTemplate.postForObject(
                 "/api/auth/login", request, AuthResponse.class);
-        assert response != null;
+        assertThat(response).isNotNull();
         return response.token();
     }
 
@@ -138,5 +138,102 @@ class UserControllerIT {
                 "/api/shipments", request, Map.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    void adminCanDeleteUser() {
+        String token = adminToken();
+        String email = "ops-" + UUID.randomUUID() + "@trackflow.dev";
+
+        ResponseEntity<UserResponse> created = restTemplate.exchange(
+                "/api/users", HttpMethod.POST,
+                withAuth(new CreateUserRequest(email, "password123", "OPS"), token), UserResponse.class);
+
+        assert created.getBody() != null;
+        Long userId = created.getBody().id();
+
+        ResponseEntity<Void> deleteResponse = restTemplate.exchange(
+                "/api/users/" + userId, HttpMethod.DELETE, withAuth(null, token), Void.class);
+
+        assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        ResponseEntity<UserResponse[]> listResponse = restTemplate.exchange(
+                "/api/users", HttpMethod.GET, withAuth(null, token), UserResponse[].class);
+
+        assertThat(listResponse.getBody())
+                .extracting(UserResponse::email)
+                .doesNotContain(email);
+    }
+
+    @Test
+    void deletedUserCannotLogin() {
+        String token = adminToken();
+        String email = "ops-" + UUID.randomUUID() + "@trackflow.dev";
+
+        ResponseEntity<UserResponse> created = restTemplate.exchange(
+                "/api/users", HttpMethod.POST,
+                withAuth(new CreateUserRequest(email, "password123", "OPS"), token), UserResponse.class);
+
+        assert created.getBody() != null;
+        Long userId = created.getBody().id();
+
+        restTemplate.exchange("/api/users/" + userId, HttpMethod.DELETE, withAuth(null, token), Void.class);
+
+        ResponseEntity<?> loginAttempt = restTemplate.postForEntity(
+                "/api/auth/login", new LoginRequest(email, "password123"), Map.class);
+
+        assertThat(loginAttempt.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    }
+
+    @Test
+    void adminCannotDeleteOwnAccount() {
+        String token = adminToken();
+
+        ResponseEntity<UserResponse[]> listResponse = restTemplate.exchange(
+                "/api/users", HttpMethod.GET, withAuth(null, token), UserResponse[].class);
+
+        assert listResponse.getBody() != null;
+        Long adminId = java.util.Arrays.stream(listResponse.getBody())
+                .filter(u -> u.email().equals("admin@trackflow.dev"))
+                .findFirst()
+                .orElseThrow()
+                .id();
+
+        ResponseEntity<?> response = restTemplate.exchange(
+                "/api/users/" + adminId, HttpMethod.DELETE, withAuth(null, token), Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+    }
+
+    @Test
+    void nonAdminCannotDeleteUser() {
+        String adminToken = adminToken();
+        String opsEmail = "ops-" + UUID.randomUUID() + "@trackflow.dev";
+
+        ResponseEntity<UserResponse> opsCreated = restTemplate.exchange(
+                "/api/users", HttpMethod.POST,
+                withAuth(new CreateUserRequest(opsEmail, "password123", "OPS"), adminToken), UserResponse.class);
+
+        assert opsCreated.getBody() != null;
+        Long opsId = opsCreated.getBody().id();
+
+        AuthResponse opsLogin = restTemplate.postForObject(
+                "/api/auth/login", new LoginRequest(opsEmail, "password123"), AuthResponse.class);
+        assert opsLogin != null;
+
+        ResponseEntity<?> response = restTemplate.exchange(
+                "/api/users/" + opsId, HttpMethod.DELETE, withAuth(null, opsLogin.token()), Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    }
+
+    @Test
+    void deletingNonExistentUserReturnsNotFound() {
+        String token = adminToken();
+
+        ResponseEntity<?> response = restTemplate.exchange(
+                "/api/users/999999", HttpMethod.DELETE, withAuth(null, token), Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 }

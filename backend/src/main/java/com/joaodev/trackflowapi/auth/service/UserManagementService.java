@@ -30,6 +30,7 @@ public class UserManagementService {
                 .passwordHash(passwordEncoder.encode(request.password()))
                 .role(request.role())
                 .active(true)
+                .deleted(false)
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -37,7 +38,7 @@ public class UserManagementService {
     }
 
     public List<User> listUsers() {
-        return userRepository.findAll();
+        return userRepository.findByDeletedFalse();
     }
 
     public User setActive(Long userId, boolean active) {
@@ -50,6 +51,18 @@ public class UserManagementService {
         User user = getUserById(userId);
         user.setRole(newRole);
         return userRepository.save(user);
+    }
+
+    public void deleteUser(Long userId, String currentUserEmail) {
+        User user = getUserById(userId);
+
+        if (user.getEmail().equalsIgnoreCase(currentUserEmail)) {
+            throw new SelfDeletionNotAllowedException();
+        }
+
+        user.setDeleted(true);
+        user.setActive(false);
+        userRepository.save(user);
     }
 
     private User getUserById(Long userId) {

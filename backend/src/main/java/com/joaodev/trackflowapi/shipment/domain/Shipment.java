@@ -38,4 +38,7 @@ public class Shipment {
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @Column(nullable = false)
+    private boolean deleted;
 }

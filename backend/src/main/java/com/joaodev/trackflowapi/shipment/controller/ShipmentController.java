@@ -50,4 +50,10 @@ public class ShipmentController {
     public List<Shipment> listShipments() {
         return shipmentService.findAll();
     }
+
+    @DeleteMapping("/{trackingCode}")
+    public ResponseEntity<Void> deleteShipment(@PathVariable String trackingCode) {
+        shipmentService.deleteShipment(trackingCode);
+        return ResponseEntity.noContent().build();
+    }
 }

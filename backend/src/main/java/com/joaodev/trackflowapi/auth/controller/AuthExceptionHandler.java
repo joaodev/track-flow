@@ -2,6 +2,7 @@ package com.joaodev.trackflowapi.auth.controller;
 
 import com.joaodev.trackflowapi.auth.service.AccountDeactivatedException;
 import com.joaodev.trackflowapi.auth.service.EmailAlreadyRegisteredException;
+import com.joaodev.trackflowapi.auth.service.SelfDeletionNotAllowedException;
 import com.joaodev.trackflowapi.auth.service.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +34,11 @@ public class AuthExceptionHandler  {
     @ExceptionHandler(AccountDeactivatedException.class)
     public ResponseEntity<Map<String, Object>> handleDeactivated(AccountDeactivatedException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorBody(ex.getMessage()));
+    }
+
+    @ExceptionHandler(SelfDeletionNotAllowedException.class)
+    public ResponseEntity<Map<String, Object>> handleSelfDeletion(SelfDeletionNotAllowedException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorBody(ex.getMessage()));
     }
 
     private Map<String, Object> errorBody(String message) {
