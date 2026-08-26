@@ -20,7 +20,9 @@
   <app-shipment-table
     [shipments]="(shipments$ | async) ?? []"
     [loading]="(loading$ | async) ?? false"
+    [isAdmin]="(isAdmin$ | async) ?? false"
     (updateStatus)="onUpdateStatus($event)"
     (viewDetails)="onViewDetails($event)"
+    (deleteShipment)="onDeleteShipment($event)"
   />
 </div>

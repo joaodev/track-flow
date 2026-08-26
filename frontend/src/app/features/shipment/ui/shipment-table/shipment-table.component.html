@@ -54,6 +54,11 @@
           } @else {
             <mat-icon class="action-disabled" matTooltip="Cancelled shipments can't be updated">lock</mat-icon>
           }
+          @if (isAdmin) {
+            <button mat-icon-button color="warn" (click)="deleteShipment.emit(shipment)" matTooltip="Delete shipment">
+              <mat-icon>delete</mat-icon>
+            </button>
+          }
         </td>
       </ng-container>
 

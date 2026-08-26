@@ -50,6 +50,9 @@
         >
           {{ user.active ? 'Deactivate' : 'Activate' }}
         </button>
+        <button mat-icon-button color="warn" (click)="deleteUser.emit(user.id)" matTooltip="Delete user">
+          <mat-icon>delete</mat-icon>
+        </button>
       </td>
     </ng-container>
 

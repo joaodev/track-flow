@@ -28,4 +28,8 @@ export class UserService {
   activate(id: number): Observable<User> {
     return this.http.patch<User>(`${this.baseUrl}/${id}/activate`, {});
   }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
 }

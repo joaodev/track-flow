@@ -20,6 +20,8 @@ import {
   Shipment,
   UpdateShipmentStatusRequest,
 } from '../../data-access/shipment.model';
+import { selectIsAdmin } from '../../../auth/data-access/auth.selectors';
+import { ConfirmDialogComponent } from '../../../../shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-shipment-list',
@@ -36,6 +38,7 @@ export class ShipmentListComponent implements OnInit {
   loading$ = this.store.select(selectLoading);
   error$ = this.store.select(selectError);
   stats$ = this.store.select(selectShipmentStats);
+  isAdmin$ = this.store.select(selectIsAdmin);
 
   ngOnInit(): void {
     this.store.dispatch(ShipmentActions.loadShipments());
@@ -68,5 +71,23 @@ export class ShipmentListComponent implements OnInit {
 
   onViewDetails(shipment: Shipment): void {
     this.dialog.open(ShipmentDetailDialogComponent, { data: { shipment }, width: '480px' });
+  }
+
+  onDeleteShipment(shipment: Shipment): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Delete shipment',
+        message: `Are you sure you want to delete shipment ${shipment.trackingCode}? This cannot be undone.`,
+      },
+      width: '400px',
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean | undefined) => {
+      if (confirmed) {
+        this.store.dispatch(
+          ShipmentActions.deleteShipment({ trackingCode: shipment.trackingCode }),
+        );
+      }
+    });
   }
 }

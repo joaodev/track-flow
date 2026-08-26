@@ -12,5 +12,6 @@
     [users]="(users$ | async) ?? []"
     (changeRole)="onChangeRole($event)"
     (toggleActive)="onToggleActive($event)"
+    (deleteUser)="onDeleteUser($event)"
   />
 </div>

@@ -33,4 +33,8 @@ export class ShipmentService {
   updateStatus(trackingCode: string, request: UpdateShipmentStatusRequest): Observable<Shipment> {
     return this.http.put<Shipment>(`${this.baseUrl}/${trackingCode}/status`, request);
   }
+
+  delete(trackingCode: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${trackingCode}`);
+  }
 }

@@ -43,6 +43,8 @@ export class ShipmentTableComponent implements OnChanges, AfterViewInit {
   @Input() loading = false;
   @Output() updateStatus = new EventEmitter<Shipment>();
   @Output() viewDetails = new EventEmitter<Shipment>();
+  @Input() isAdmin = false;
+  @Output() deleteShipment = new EventEmitter<Shipment>();
 
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;

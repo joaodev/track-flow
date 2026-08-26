@@ -8,6 +8,7 @@ import { CreateUserFormComponent } from '../../ui/create-user-form/create-user-f
 import { UserActions } from '../../data-access/user.actions';
 import { CreateUserRequest } from '../../data-access/user.model';
 import { selectAllUsers, selectUsersError } from '../../data-access/user.selector';
+import { ConfirmDialogComponent } from '../../../../shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-user-management',
@@ -43,5 +44,21 @@ export class UserManagementComponent implements OnInit {
 
   onToggleActive(event: { id: number; active: boolean }): void {
     this.store.dispatch(UserActions.setActive(event));
+  }
+
+  onDeleteUser(id: number): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Delete user',
+        message: 'Are you sure you want to delete this user? This cannot be undone.',
+      },
+      width: '400px',
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean | undefined) => {
+      if (confirmed) {
+        this.store.dispatch(UserActions.deleteUser({ id }));
+      }
+    });
   }
 }

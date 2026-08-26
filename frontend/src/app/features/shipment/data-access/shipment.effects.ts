@@ -4,6 +4,8 @@ import { catchError, map, mergeMap, merge, of } from 'rxjs';
 import { ShipmentService } from './shipment.service';
 import { ShipmentActions } from './shipment.actions';
 import { ShipmentSocketService } from './shipment-socket.service';
+import { isShipmentDeletedEvent, ShipmentSocketEvent } from './shipment-deleted-event.model';
+
 
 
 @Injectable()
@@ -70,7 +72,7 @@ export class ShipmentEffects {
       mergeMap(({ shipments }) =>
         merge(...shipments.map((shipment) => this.socketService.watch(shipment.trackingCode))),
       ),
-      map((event) => ShipmentActions.shipmentStatusReceived({ event })),
+      map((event) => this.toShipmentAction(event)),
     ),
   );
 
@@ -78,9 +80,33 @@ export class ShipmentEffects {
     this.actions$.pipe(
       ofType(ShipmentActions.createShipmentSuccess),
       mergeMap(({ shipment }) => this.socketService.watch(shipment.trackingCode)),
-      map((event) => ShipmentActions.shipmentStatusReceived({ event })),
+      map((event) => this.toShipmentAction(event)),
     ),
   );
+
+  deleteShipment$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ShipmentActions.deleteShipment),
+      mergeMap(({ trackingCode }) =>
+        this.shipmentService.delete(trackingCode).pipe(
+          map(() => ShipmentActions.deleteShipmentSuccess({ trackingCode })),
+          catchError((error) =>
+            of(
+              ShipmentActions.deleteShipmentFailure({
+                error: error.error?.message ?? 'Failed to delete shipment',
+              }),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  private toShipmentAction(event: ShipmentSocketEvent) {
+    return isShipmentDeletedEvent(event)
+      ? ShipmentActions.shipmentDeletedReceived({ trackingCode: event.trackingCode })
+      : ShipmentActions.shipmentStatusReceived({ event });
+  }
 
   loadShipment$ = createEffect(() =>
     this.actions$.pipe(
@@ -104,7 +130,7 @@ export class ShipmentEffects {
     this.actions$.pipe(
       ofType(ShipmentActions.loadShipmentSuccess),
       mergeMap(({ shipment }) => this.socketService.watch(shipment.trackingCode)),
-      map((event) => ShipmentActions.shipmentStatusReceived({ event })),
+      map((event) => this.toShipmentAction(event)),
     ),
   );
 }

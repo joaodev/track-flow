@@ -23,19 +23,25 @@ export const userFeature = createFeature({
       UserActions.loadUsers,
       UserActions.createUser,
       UserActions.changeRole,
-      (state): UserState => ({ ...state, loading: true, error: null })
+      (state): UserState => ({ ...state, loading: true, error: null }),
     ),
 
     on(UserActions.loadUsersSuccess, (state, { users }): UserState =>
-      userAdapter.setAll(users, { ...state, loading: false })
+      userAdapter.setAll(users, { ...state, loading: false }),
     ),
 
     on(UserActions.createUserSuccess, UserActions.setActiveSuccess, (state, { user }): UserState =>
-      userAdapter.addOne(user, { ...state, loading: false })
+      userAdapter.addOne(user, { ...state, loading: false }),
     ),
 
     on(UserActions.changeRoleSuccess, UserActions.setActiveSuccess, (state, { user }): UserState =>
-      userAdapter.upsertOne(user, { ...state, loading: false })
+      userAdapter.upsertOne(user, { ...state, loading: false }),
+    ),
+
+    on(UserActions.deleteUser, (state): UserState => ({ ...state, loading: true, error: null })),
+
+    on(UserActions.deleteUserSuccess, (state, { id }): UserState =>
+      userAdapter.removeOne(id, { ...state, loading: false }),
     ),
 
     on(
@@ -43,7 +49,8 @@ export const userFeature = createFeature({
       UserActions.createUserFailure,
       UserActions.changeRoleFailure,
       UserActions.setActiveFailure,
-      (state, { error }): UserState => ({ ...state, loading: false, error })
+      UserActions.deleteUserFailure,
+      (state, { error }): UserState => ({ ...state, loading: false, error }),
     ),
-  )
+  ),
 });

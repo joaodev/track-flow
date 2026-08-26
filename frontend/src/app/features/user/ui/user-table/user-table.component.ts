@@ -17,6 +17,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { User } from '../../data-access/user.model';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-user-table',
@@ -30,6 +32,8 @@ import { User } from '../../data-access/user.model';
     MatSelectModule,
     MatFormFieldModule,
     MatInputModule,
+    MatIcon,
+    MatTooltip,
   ],
   templateUrl: './user-table.component.html',
   styleUrl: './user-table.component.scss',
@@ -38,6 +42,7 @@ export class UserTableComponent implements OnChanges, AfterViewInit {
   @Input({ required: true }) users: User[] = [];
   @Output() changeRole = new EventEmitter<{ id: number; role: string }>();
   @Output() toggleActive = new EventEmitter<{ id: number; active: boolean }>();
+  @Output() deleteUser = new EventEmitter<number>();
 
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;

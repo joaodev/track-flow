@@ -79,11 +79,26 @@ export const shipmentFeature = createFeature({
       loading: false,
     })),
 
+    on(ShipmentActions.deleteShipment, (state): ShipmentState => ({
+      ...state,
+      loading: true,
+      error: null,
+    })),
+
+    on(ShipmentActions.deleteShipmentSuccess, (state, { trackingCode }): ShipmentState =>
+      shipmentAdapter.removeOne(trackingCode, { ...state, loading: false }),
+    ),
+
+    on(ShipmentActions.shipmentDeletedReceived, (state, { trackingCode }): ShipmentState =>
+      shipmentAdapter.removeOne(trackingCode, state),
+    ),
+
     on(
       ShipmentActions.loadShipmentsFailure,
       ShipmentActions.createShipmentFailure,
       ShipmentActions.updateShipmentStatusFailure,
       ShipmentActions.loadHistoryFailure,
+      ShipmentActions.deleteShipmentFailure,
       (state, { error }): ShipmentState => ({
         ...state,
         loading: false,
