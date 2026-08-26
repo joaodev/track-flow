@@ -15,6 +15,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { UpdateStatusFormComponent } from '../../ui/update-status-form/update-status-form.component';
 import { RouterLink } from '@angular/router';
 import { selectIsAdmin } from '../../../auth/data-access/auth.selectors';
+import { StatCardComponent } from '../../ui/stat-card/stat-card.component';
+import { selectShipmentStats } from '../../data-access/shipment.selectors';
 
 @Component({
   selector: 'app-shipment-list',
@@ -25,8 +27,10 @@ import { selectIsAdmin } from '../../../auth/data-access/auth.selectors';
     ShipmentTableComponent,
     CreateShipmentFormComponent,
     RouterLink,
+    StatCardComponent,
   ],
   templateUrl: './shipment-list.component.html',
+  styleUrl: 'shipment-list.component.scss',
 })
 export class ShipmentListComponent implements OnInit {
   private store = inject(Store);
@@ -36,6 +40,7 @@ export class ShipmentListComponent implements OnInit {
   loading$ = this.store.select(selectLoading);
   error$ = this.store.select(selectError);
   isAdmin$ = this.store.select(selectIsAdmin);
+  stats$ = this.store.select(selectShipmentStats);
 
   showCreateForm = signal(false);
 

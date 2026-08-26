@@ -17,6 +17,15 @@
     <p>{{ error }}</p>
   }
 
+  @if (stats$ | async; as stats) {
+    <div class="stats-row">
+      <app-stat-card label="Total Shipments" [value]="stats.total" icon="inventory_2" color="blue" />
+      <app-stat-card label="In Transit" [value]="stats.inTransit" icon="local_shipping" color="amber" />
+      <app-stat-card label="Delivered" [value]="stats.delivered" icon="check_circle" color="teal" />
+      <app-stat-card label="Cancelled" [value]="stats.cancelled" icon="cancel" color="gray" />
+    </div>
+  }
+
   <app-shipment-table
     [shipments]="(shipments$ | async) ?? []"
     [loading]="(loading$ | async) ?? false"

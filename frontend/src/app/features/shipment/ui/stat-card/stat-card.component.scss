@@ -1,0 +1,32 @@
+.stat-card {
+  border-radius: 12px;
+  padding: 20px 24px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 200px;
+}
+
+.stat-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stat-card-label {
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.stat-card-value {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.stat-card--blue { background: var(--card-blue); }
+.stat-card--teal { background: var(--card-teal); }
+.stat-card--gray { background: var(--card-gray); }
+.stat-card--amber { background: var(--card-amber); }

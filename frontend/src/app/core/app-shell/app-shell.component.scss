@@ -1,0 +1,76 @@
+.shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 240px;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 16px;
+  gap: 32px;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.sidebar-nav a:hover {
+  background: var(--surface);
+  color: var(--text-primary);
+}
+
+.sidebar-nav a.active {
+  background: var(--surface);
+  color: var(--text-primary);
+  border-left: 3px solid var(--card-blue);
+}
+
+.sidebar-logout {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.sidebar-logout:hover {
+  color: var(--text-primary);
+}
+
+.shell-main {
+  flex: 1;
+  padding: 32px 40px;
+  overflow-y: auto;
+}

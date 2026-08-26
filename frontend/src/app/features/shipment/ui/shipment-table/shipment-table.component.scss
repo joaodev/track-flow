@@ -1,0 +1,44 @@
+.mono {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+}
+
+.status-pill {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.status-pill--created {
+  background: color-mix(in srgb, var(--status-created) 20%, transparent);
+  color: var(--status-created);
+}
+
+.status-pill--in_transit {
+  background: color-mix(in srgb, var(--status-in-transit) 20%, transparent);
+  color: var(--status-in-transit);
+}
+
+.status-pill--delivered {
+  background: color-mix(in srgb, var(--status-delivered) 20%, transparent);
+  color: var(--status-delivered);
+}
+
+.status-pill--cancelled {
+  background: color-mix(in srgb, var(--status-cancelled) 20%, transparent);
+  color: var(--status-cancelled);
+}
+
+.row-pulse {
+  animation: pulse-flash 1s ease-out;
+}
+
+@keyframes pulse-flash {
+  0% { background-color: color-mix(in srgb, var(--card-amber) 25%, transparent); }
+  100% { background-color: transparent; }
+}
