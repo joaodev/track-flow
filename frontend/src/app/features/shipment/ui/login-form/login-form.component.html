@@ -1,7 +1,7 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <mat-form-field appearance="outline">
     <mat-label>Email</mat-label>
-    <input matInput formControlName="email" type="email" autocomplete="username" />
+    <input matInput formControlName="email" type="email" name="username" autocomplete="username" />
     @if (form.controls.email.invalid && form.controls.email.touched) {
       <mat-error>A valid email is required</mat-error>
     }
@@ -12,6 +12,7 @@
     <input
       matInput
       formControlName="password"
+      name="password"
       [type]="hidePassword ? 'password' : 'text'"
       autocomplete="current-password"
     />
