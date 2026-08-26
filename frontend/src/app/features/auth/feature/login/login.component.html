@@ -1,9 +1,25 @@
 <div class="login-page">
-  <h1>Track Flow — Operations Login</h1>
+  <div class="login-brand">
+    <div class="login-brand-content">
+      <div class="brand-logo">
+        <mat-icon>local_shipping</mat-icon>
+        <span>Track Flow</span>
+      </div>
+      <h1>Operations Console</h1>
+      <p>Monitor shipments in real time, update status from pickup to delivery, and keep your team in sync.</p>
+    </div>
+  </div>
 
-  @if (error$ | async; as error) {
-    <p>{{ error }}</p>
-  }
+  <div class="login-panel">
+    <div class="login-card">
+      <h2>Log in</h2>
+      <p class="login-subtitle">Sign in with your operations account</p>
 
-  <app-login-form (login)="onLogin($event)" />
+      @if (error$ | async; as error) {
+        <div class="login-error">{{ error }}</div>
+      }
+
+      <app-login-form (login)="onLogin($event)" />
+    </div>
+  </div>
 </div>

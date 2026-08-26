@@ -1,0 +1,17 @@
+<h2 mat-dialog-title>
+  <span class="mono">{{ data.shipment.trackingCode }}</span>
+</h2>
+
+<div mat-dialog-content>
+  <p class="route">{{ data.shipment.origin }} → {{ data.shipment.destination }}</p>
+  <p class="carrier">{{ data.shipment.carrier }}</p>
+
+  <app-tracking-progress [status]="data.shipment.status" />
+
+  <h3>History</h3>
+  <app-tracking-timeline [events]="(history$ | async) ?? []" />
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Close</button>
+</div>

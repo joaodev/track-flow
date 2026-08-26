@@ -9,13 +9,13 @@ import { AppShellComponent } from './core/app-shell/app-shell.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
-  { path: 'track', component: TrackShipmentComponent },
   {
     path: '',
     component: AppShellComponent,
     canActivate: [authGuard],
     children: [
       { path: '', component: ShipmentListComponent },
+      { path: 'track', component: TrackShipmentComponent },
       { path: 'admin/users', component: UserManagementComponent, canActivate: [adminGuard] },
     ],
   },

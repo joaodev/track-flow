@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
   standalone: true,
   imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule],
   templateUrl: './track-search-form.component.html',
+  styleUrl: './track-search-form.component.scss',
 })
 export class TrackSearchFormComponent {
   @Output() search = new EventEmitter<string>();

@@ -1,20 +1,27 @@
 <div class="track-shipment-page">
-  <h1>Track Your Shipment</h1>
+  <h1>Track Shipment</h1>
+  <p class="page-subtitle">Look up any shipment by its tracking code.</p>
 
   <app-track-search-form (search)="onSearch($event)" />
 
   @if (error$ | async; as error) {
-    <p>{{ error }}</p>
+    <div class="track-error">{{ error }}</div>
   }
 
   @if (shipment$ | async; as shipment) {
-    <section>
-      <h2>{{ shipment.trackingCode }}</h2>
-      <p>{{ shipment.origin }} → {{ shipment.destination }}</p>
-      <p>Carrier: {{ shipment.carrier }}</p>
-      <p>Status: <strong>{{ shipment.status }}</strong></p>
-    </section>
+    <div class="track-result">
+      <div class="track-result-header">
+        <div>
+          <span class="track-code">{{ shipment.trackingCode }}</span>
+          <p class="track-route">{{ shipment.origin }} → {{ shipment.destination }}</p>
+        </div>
+        <span class="track-carrier">{{ shipment.carrier }}</span>
+      </div>
 
-    <app-tracking-timeline [events]="(history$ | async) ?? []" />
+      <app-tracking-progress [status]="shipment.status" />
+
+      <h3>History</h3>
+      <app-tracking-timeline [events]="(history$ | async) ?? []" />
+    </div>
   }
 </div>

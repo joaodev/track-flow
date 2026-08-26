@@ -1,57 +1,74 @@
 @if (loading) {
   <mat-spinner diameter="32" />
 } @else {
-  <table mat-table [dataSource]="shipments" class="mat-elevation-z1">
-    <ng-container matColumnDef="trackingCode">
-      <th mat-header-cell *matHeaderCellDef>Tracking Code</th>
-      <td mat-cell *matCellDef="let shipment" class="mono">{{ shipment.trackingCode }}</td>
-    </ng-container>
+  <div class="table-toolbar">
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Search</mat-label>
+      <input matInput (input)="applyFilter($any($event.target).value)" placeholder="Code, origin, carrier..." />
+    </mat-form-field>
+  </div>
 
-    <ng-container matColumnDef="origin">
-      <th mat-header-cell *matHeaderCellDef>Origin</th>
-      <td mat-cell *matCellDef="let shipment">{{ shipment.origin }}</td>
-    </ng-container>
+  <div class="table-scroll">
+    <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z1">
+      <ng-container matColumnDef="trackingCode">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Tracking Code</th>
+        <td mat-cell *matCellDef="let shipment" class="mono">
+          <button class="link-button" (click)="viewDetails.emit(shipment)">{{ shipment.trackingCode }}</button>
+        </td>
+      </ng-container>
 
-    <ng-container matColumnDef="destination">
-      <th mat-header-cell *matHeaderCellDef>Destination</th>
-      <td mat-cell *matCellDef="let shipment">{{ shipment.destination }}</td>
-    </ng-container>
+      <ng-container matColumnDef="origin">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Origin</th>
+        <td mat-cell *matCellDef="let shipment">{{ shipment.origin }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="carrier">
-      <th mat-header-cell *matHeaderCellDef>Carrier</th>
-      <td mat-cell *matCellDef="let shipment">{{ shipment.carrier }}</td>
-    </ng-container>
+      <ng-container matColumnDef="destination">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Destination</th>
+        <td mat-cell *matCellDef="let shipment">{{ shipment.destination }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="status">
-      <th mat-header-cell *matHeaderCellDef>Status</th>
-      <td mat-cell *matCellDef="let shipment">
-    <span class="status-pill" [class]="'status-pill--' + shipment.status.toLowerCase()">
-      {{ shipment.status }}
-    </span>
-      </td>
-    </ng-container>
+      <ng-container matColumnDef="carrier">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Carrier</th>
+        <td mat-cell *matCellDef="let shipment">{{ shipment.carrier }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="updatedAt">
-      <th mat-header-cell *matHeaderCellDef>Updated At</th>
-      <td mat-cell *matCellDef="let shipment">{{ shipment.updatedAt | date: 'short' }}</td>
-    </ng-container>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+        <td mat-cell *matCellDef="let shipment">
+          <span class="status-pill" [class]="'status-pill--' + shipment.status.toLowerCase()">
+            {{ shipment.status }}
+          </span>
+        </td>
+      </ng-container>
 
-    <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef></th>
-      <td mat-cell *matCellDef="let shipment">
-        <button mat-button color="primary" (click)="updateStatus.emit(shipment)">Update Status</button>
-      </td>
-    </ng-container>
+      <ng-container matColumnDef="updatedAt">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Updated At</th>
+        <td mat-cell *matCellDef="let shipment">{{ shipment.updatedAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+      </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr
-      mat-row
-      *matRowDef="let row; columns: displayedColumns"
-      [class.row-pulse]="recentlyUpdated.has(row.trackingCode)"
-    ></tr>
-  </table>
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef class="col-center"></th>
+        <td mat-cell *matCellDef="let shipment" class="col-center">
+          @if (shipment.status !== 'CANCELLED') {
+            <button mat-button color="primary" (click)="updateStatus.emit(shipment)">Update Status</button>
+          } @else {
+            <mat-icon class="action-disabled" matTooltip="Cancelled shipments can't be updated">lock</mat-icon>
+          }
+        </td>
+      </ng-container>
 
-  @if (shipments.length === 0) {
-    <p>No shipments yet.</p>
-  }
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns"
+        [class.row-pulse]="recentlyUpdated.has(row.trackingCode)"
+      ></tr>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell no-data" [attr.colspan]="displayedColumns.length">No shipments match your search.</td>
+      </tr>
+    </table>
+  </div>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 25]" [pageSize]="10" showFirstLastButtons=""></mat-paginator>
 }

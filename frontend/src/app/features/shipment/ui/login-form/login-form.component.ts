@@ -10,6 +10,7 @@ import { LoginRequest } from '../../../auth/data-access/auth.model';
   standalone: true,
   imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule],
   templateUrl: './login-form.component.html',
+  styleUrl: 'login-form.component.scss',
 })
 export class LoginFormComponent {
   @Output() login = new EventEmitter<LoginRequest>();

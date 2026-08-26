@@ -44,3 +44,21 @@ h1, h2, h3 {
   font-weight: 600;
   margin: 0;
 }
+
+table.mat-mdc-table .mat-mdc-header-row {
+  background: color-mix(in srgb, var(--card-blue) 25%, var(--surface)) !important;
+}
+
+.mat-mdc-header-cell {
+  color: var(--text-primary) !important;
+  font-weight: 600;
+  border-bottom-color: var(--border) !important;
+}
+
+.mat-mdc-row {
+  background: var(--surface);
+}
+
+.mat-mdc-cell {
+  border-bottom-color: var(--border) !important;
+}

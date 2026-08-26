@@ -1,9 +1,10 @@
-import { Component, EventEmitter, inject, Output } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { CreateUserRequest } from '../../data-access/user.model';
 
 @Component({
@@ -15,12 +16,13 @@ import { CreateUserRequest } from '../../data-access/user.model';
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
+    MatDialogModule,
   ],
   templateUrl: './create-user-form.component.html',
+  styleUrl: './create-user-form.component.scss',
 })
 export class CreateUserFormComponent {
-  @Output() create = new EventEmitter<CreateUserRequest>();
-
+  private dialogRef = inject(MatDialogRef<CreateUserFormComponent>);
   private fb = inject(FormBuilder);
 
   form = this.fb.nonNullable.group({
@@ -34,7 +36,10 @@ export class CreateUserFormComponent {
       this.form.markAllAsTouched();
       return;
     }
-    this.create.emit(this.form.getRawValue());
-    this.form.reset({ role: 'OPS' });
+    this.dialogRef.close(this.form.getRawValue() as CreateUserRequest);
+  }
+
+  onCancel(): void {
+    this.dialogRef.close();
   }
 }

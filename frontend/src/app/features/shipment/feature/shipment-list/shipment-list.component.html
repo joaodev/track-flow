@@ -1,21 +1,8 @@
 <div class="shipment-list-page">
   <header>
     <h1>Shipments</h1>
-    <button mat-raised-button color="primary" (click)="toggleCreateForm()">
-      {{ showCreateForm() ? 'Cancel' : 'New Shipment' }}
-    </button>
-    @if (isAdmin$ | async) {
-      <a routerLink="/admin/users">Manage Users</a>
-    }
+    <button mat-raised-button color="primary" (click)="onOpenCreateForm()">New Shipment</button>
   </header>
-
-  @if (showCreateForm()) {
-    <app-create-shipment-form (create)="onCreate($event)" />
-  }
-
-  @if (error$ | async; as error) {
-    <p>{{ error }}</p>
-  }
 
   @if (stats$ | async; as stats) {
     <div class="stats-row">
@@ -26,9 +13,14 @@
     </div>
   }
 
+  @if (error$ | async; as error) {
+    <p>{{ error }}</p>
+  }
+
   <app-shipment-table
     [shipments]="(shipments$ | async) ?? []"
     [loading]="(loading$ | async) ?? false"
     (updateStatus)="onUpdateStatus($event)"
+    (viewDetails)="onViewDetails($event)"
   />
 </div>

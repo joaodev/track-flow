@@ -38,6 +38,44 @@
   animation: pulse-flash 1s ease-out;
 }
 
+.link-button {
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+}
+
+.link-button:hover {
+  text-decoration-color: currentColor;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 720px;
+}
+
+.action-disabled {
+  color: var(--text-secondary);
+}
+
+.col-center {
+  text-align: center;
+}
+
+.action-disabled {
+  color: var(--text-secondary);
+  font-size: 20px;
+  vertical-align: middle;
+}
+
 @keyframes pulse-flash {
   0% { background-color: color-mix(in srgb, var(--card-amber) 25%, transparent); }
   100% { background-color: transparent; }

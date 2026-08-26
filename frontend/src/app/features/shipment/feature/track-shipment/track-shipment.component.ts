@@ -7,12 +7,19 @@ import { selectError, selectHistory, selectLoading, selectShipmentByTrackingCode
 import { Observable } from 'rxjs';
 import { Shipment, TrackingEvent } from '../../data-access/shipment.model';
 import { ShipmentActions } from '../../data-access/shipment.actions';
+import { TrackingProgressComponent } from '../../ui/tracking-progress/tracking-progress.component';
 
 @Component({
   selector: 'app-track-shipment',
   standalone: true,
-  imports: [CommonModule, TrackSearchFormComponent, TrackingTimelineComponent],
+  imports: [
+    CommonModule,
+    TrackSearchFormComponent,
+    TrackingTimelineComponent,
+    TrackingProgressComponent,
+  ],
   templateUrl: './track-shipment.component.html',
+  styleUrl: './track-shipment.component.scss'
 })
 export class TrackShipmentComponent {
   private store = inject(Store);

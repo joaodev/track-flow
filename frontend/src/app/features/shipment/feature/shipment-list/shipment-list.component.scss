@@ -1,8 +1,8 @@
 .stats-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 20px;
   margin: 24px 0;
-  flex-wrap: wrap;
 }
 
 header {

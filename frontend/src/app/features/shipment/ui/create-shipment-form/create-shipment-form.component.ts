@@ -1,19 +1,26 @@
-import { Component, EventEmitter, inject, Output } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { CreateShipmentRequest } from '../../data-access/shipment.model';
 
 @Component({
   selector: 'app-create-shipment-form',
   standalone: true,
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule],
+  imports: [
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatDialogModule,
+  ],
   templateUrl: './create-shipment-form.component.html',
+  styleUrl: './create-shipment-form.component.scss',
 })
 export class CreateShipmentFormComponent {
-  @Output() create = new EventEmitter<CreateShipmentRequest>();
-
+  private dialogRef = inject(MatDialogRef<CreateShipmentFormComponent>);
   private fb = inject(FormBuilder);
 
   form = this.fb.nonNullable.group({
@@ -27,7 +34,10 @@ export class CreateShipmentFormComponent {
       this.form.markAllAsTouched();
       return;
     }
-    this.create.emit(this.form.getRawValue());
-    this.form.reset();
+    this.dialogRef.close(this.form.getRawValue() as CreateShipmentRequest);
+  }
+
+  onCancel(): void {
+    this.dialogRef.close();
   }
 }

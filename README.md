@@ -1,198 +1,105 @@
-# Track Flow — Backend
+# Track Flow
 
-A logistics shipment tracking API built as a hands-on study project to practice full-stack development with Java/Spring and (soon) Angular. Operations staff create and update shipments; customers track them live over WebSocket without needing an account.
+A logistics shipment tracking platform built as a full-stack study project: Java/Spring on the backend, Angular/NgRx on the frontend. Operations staff create and update shipments from a dark, data-dense console; customers track any shipment live, without an account.
 
 ## The Problem
 
-A courier company needs to track shipments from pickup to delivery, giving operations staff a way to record status changes and giving customers a way to follow their package in real time — without exposing any internal system or requiring customers to log in.
+A courier company needs a way to record shipments and their status as they move from pickup to delivery, and a way for customers to follow their package in real time — without exposing internal systems or requiring a customer login.
+
+## Why This Project
+
+Built to practice full-stack development end to end, with a deliberate architectural choice carried through both sides of the stack: a **Modular Monolith**, organized by business capability (`shipment`, `auth`, `user`) rather than by technical layer, with real-time updates propagated through Spring's internal domain events on the backend and a per-feature NgRx store on the frontend — no external message broker, because this project's scale doesn't need one.
 
 ## Architecture
 
-This project follows a **Modular Monolith**: the codebase is organized by business capability (`shipment`, `auth`), not by technical layer. Each module owns its entities, repository, service, and controller; modules don't reach into each other's internals directly.
-
-Within the `shipment` module, status changes are decoupled using **Spring's internal domain events** (`ApplicationEventPublisher`), not an external message broker — this project doesn't need distributed messaging, so a broker would be unjustified complexity. When a shipment's status changes:
-
-1. `ShipmentService` persists the change and publishes a `ShipmentStatusChangedEvent`.
-2. A `@TransactionalEventListener(phase = AFTER_COMMIT)` picks it up — deliberately *after* the database transaction commits, so a WebSocket broadcast can never announce a change that ends up rolled back.
-3. The listener broadcasts the event over STOMP to `/topic/shipments/{trackingCode}`.
-
 ```
-Controller → Service (business logic, publishes domain event)
-                 │
-                 ├──► Repository → PostgreSQL
-                 │
-                 └──► TransactionalEventListener (after commit) → WebSocket broadcast
+Backend (Spring Boot)                  Frontend (Angular)
+┌───────────────────────────┐          ┌───────────────────────────┐
+│ Controllers + WebSocket    │  REST +  │ HTTP + WebSocket services │
+│ (STOMP endpoints)          │◄───────► │ (HttpClient, RxJS/STOMP)  │
+├───────────────────────────┤  STOMP   ├───────────────────────────┤
+│ Services                   │          │ NgRx effects               │
+│ (business logic, publishes │          │ (side effects, API calls) │
+│  domain events)            │          ├───────────────────────────┤
+├───────────────────────────┤          │ NgRx store                 │
+│ Repositories (Spring Data  │          │ (actions, reducers,        │
+│  JPA)                      │          │  selectors, entity)        │
+├───────────────────────────┤          ├───────────────────────────┤
+│ PostgreSQL                 │          │ Components                 │
+│                             │          │ (standalone, Material)     │
+└───────────────────────────┘          └───────────────────────────┘
 ```
+
+When a shipment's status changes: the service persists the change and publishes a `ShipmentStatusChangedEvent`; a `@TransactionalEventListener(phase = AFTER_COMMIT)` picks it up — deliberately *after* the transaction commits, so a broadcast can never announce a change that ends up rolled back — and broadcasts it over STOMP to `/topic/shipments/{trackingCode}`. On the frontend, a shared `ShipmentSocketService` subscribes per tracking code and feeds events back into the NgRx store, so any open screen (the ops list, the detail dialog, the public tracking page) updates itself without polling or a manual refresh.
 
 ## Tech Stack
 
 | Concern | Technology |
 |---|---|
-| Language / Runtime | Java 21 |
-| Framework | Spring Boot 4.1 |
-| Build tool | Maven |
-| Database | PostgreSQL |
-| DB versioning | Flyway |
+| Backend language / runtime | Java 21, Spring Boot 4.1 |
+| Backend build tool | Maven |
+| Database | PostgreSQL, Flyway |
 | Real-time | Spring WebSocket (STOMP, no SockJS) |
 | Auth | Self-issued JWT (Spring Security, HMAC/HS256) |
-| Testing | Testcontainers (PostgreSQL), Spring Boot Test |
+| Backend testing | Testcontainers (PostgreSQL), Spring Boot Test |
+| Frontend framework | Angular 22 (standalone components) |
+| State management | NgRx (store, effects, entity, store-devtools) |
+| UI | Angular Material (custom dark theme) |
+| Forms | Reactive Forms |
+| Real-time client | @stomp/stompjs |
 
-## Modules
+## Repository Structure
 
-- **`shipment`** — shipments, tracking events, REST API, WebSocket broadcasting.
-- **`auth`** — login, JWT issuance, admin-managed user accounts (create, list, promote/demote, activate/deactivate).
+```
+track-flow/
+  backend/     Spring Boot API — see backend/README.md for full API reference,
+               setup, and testing instructions
+  frontend/    Angular application
+```
 
 ## Running Locally
 
-1. Copy `.env.example` to `.env` and fill in the values (`DB_USER`, `DB_PASSWORD`, `DB_NAME`, `JWT_SECRET`). Generate a strong secret for `JWT_SECRET`:
-   ```bash
-   openssl rand -base64 32
-   ```
-2. Start PostgreSQL:
-   ```bash
-   docker compose up -d
-   docker compose ps   # wait for "healthy"
-   ```
-3. Run the application from IntelliJ (`BackendApplication`), or via Maven:
-   ```bash
-   ./mvnw spring-boot:run
-   ```
+### 1. Backend
 
-The `.env` file is loaded automatically at startup via `spring-dotenv` — no manual environment variable setup needed.
+```bash
+cd backend
+cp .env.example .env   # fill in DB credentials and JWT_SECRET (openssl rand -base64 32)
+docker compose up -d   # starts PostgreSQL
+./mvnw spring-boot:run
+```
 
-On startup, Flyway applies all migrations, including seeding a default admin account (see below).
-
-## Database Migrations
-
-| Version | Description |
-|---|---|
-| `V1` | `shipments` and `tracking_events` tables |
-| `V2` | `users` table |
-| `V3` | Seeds the default admin account |
-
-## Default Admin Account
-
-Since only an admin can create other users, one is seeded via migration to bootstrap the system:
+Flyway applies all migrations on startup, including a seeded admin account:
 
 ```
 email:    admin@trackflow.dev
 password: ChangeMe123!
 ```
 
-Change this password immediately in any environment beyond local development. There's currently no self-service "change my password" endpoint — an admin would need to be created fresh with a new password, or a password-reset feature added.
+Change this immediately outside of local development. Full API reference, WebSocket testing instructions, and backend architecture notes live in [`backend/README.md`](backend/README.md).
 
-## API Reference
-
-Base URL: `http://localhost:8080`
-
-### Auth
-
-| Method | Path | Access | Description |
-|---|---|---|---|
-| `POST` | `/api/auth/login` | Public | Authenticates with email/password, returns a JWT |
-
-### Users (admin only)
-
-| Method | Path | Access | Description |
-|---|---|---|---|
-| `POST` | `/api/users` | ADMIN | Create a new user (email, password, role) |
-| `GET` | `/api/users` | ADMIN | List all users |
-| `PATCH` | `/api/users/{id}/role` | ADMIN | Change a user's role (`ADMIN` / `OPS`) |
-| `PATCH` | `/api/users/{id}/deactivate` | ADMIN | Deactivate an account (soft delete — blocks login, preserves history) |
-| `PATCH` | `/api/users/{id}/activate` | ADMIN | Reactivate an account |
-
-### Shipments
-
-| Method | Path | Access | Description |
-|---|---|---|---|
-| `POST` | `/api/shipments` | Authenticated | Create a shipment |
-| `PUT` | `/api/shipments/{trackingCode}/status` | Authenticated | Update a shipment's status |
-| `GET` | `/api/shipments/{trackingCode}` | Public | Look up a shipment (customer tracking) |
-| `GET` | `/api/shipments/{trackingCode}/history` | Public | Full chronological event history |
-
-## Testing the API
-
-### 1. Log in
+### 2. Frontend
 
 ```bash
-TOKEN=$(curl -s -X POST http://localhost:8080/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email": "admin@trackflow.dev", "password": "ChangeMe123!"}' \
-  | python3 -c "import sys,json; print(json.load(sys.stdin)['token'])")
+cd frontend
+npm install
+ng serve
 ```
 
-### 2. Create a shipment
+Open `http://localhost:4200`. The Angular CLI dev server proxies `/api` and `/ws` to the backend on `localhost:8080` (see `frontend/proxy.conf.json`), so no CORS configuration is needed in development.
 
-```bash
-curl -i -X POST http://localhost:8080/api/shipments \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $TOKEN" \
-  -d '{"origin": "São Paulo", "destination": "Rio de Janeiro", "carrier": "Correios"}'
-```
+## Feature Tour
 
-Returns `201 Created` with the shipment, including a generated `trackingCode` (e.g. `TF1A2B3C4D5E`).
+- **Operations console** (`/`, authenticated) — dark sidebar layout with live stat cards (total / in transit / delivered / cancelled, computed from real state, not fabricated metrics), a sortable and filterable shipment table with pagination, and a status pulse animation on rows when a WebSocket update arrives.
+- **Create and update shipments** — modal forms (Angular Material `MatDialog`) instead of full page navigations for quick, in-context actions. Cancelled shipments can no longer be updated, reflected in the UI with a disabled, tooltipped lock icon.
+- **Shipment detail** — clicking a tracking code opens a dialog with the current progress (a stepper across Created → In Transit → Delivered, or a cancelled state) and the full event history, without leaving the list.
+- **Public tracking page** (`/track`) — accessible without login; enter a tracking code to see status and history, also updating live over WebSocket.
+- **Authentication** — email/password login issuing a self-signed JWT; the token is persisted in `localStorage` and read synchronously into the NgRx store's initial state (avoiding a race condition between the route guard and session restoration on page reload); an `HttpInterceptorFn` attaches it to every `/api` request automatically.
+- **User management** (`/admin/users`, admin only) — create users, change roles (`ADMIN` / `OPS`), and deactivate/reactivate accounts (soft delete, preserving audit history). Guarded both by route (`adminGuard`, decoding the JWT's `role` claim) and, for real, by the backend's `hasRole("ADMIN")` check.
 
-### 3. Update its status
+## Testing
 
-```bash
-curl -i -X PUT http://localhost:8080/api/shipments/TF1A2B3C4D5E/status \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $TOKEN" \
-  -d '{"status": "IN_TRANSIT", "location": "São Paulo Hub", "description": "Departed origin facility"}'
-```
-
-### 4. Track it (no auth needed — this is the public customer-facing endpoint)
-
-```bash
-curl http://localhost:8080/api/shipments/TF1A2B3C4D5E
-curl http://localhost:8080/api/shipments/TF1A2B3C4D5E/history
-```
-
-### 5. Manage users (admin only)
-
-```bash
-curl -i -X POST http://localhost:8080/api/users \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $TOKEN" \
-  -d '{"email": "ops1@trackflow.dev", "password": "password123", "role": "OPS"}'
-
-curl http://localhost:8080/api/users -H "Authorization: Bearer $TOKEN"
-```
-
-## Testing the WebSocket
-
-The WebSocket endpoint is `ws://localhost:8080/ws` (STOMP, no SockJS fallback). Clients subscribe to `/topic/shipments/{trackingCode}` to receive live updates whenever that shipment's status changes.
-
-A quick way to test manually is with a small Node script using `@stomp/stompjs`:
-
-```javascript
-import { Client } from '@stomp/stompjs';
-import WebSocket from 'ws';
-
-const client = new Client({
-  webSocketFactory: () => new WebSocket('ws://localhost:8080/ws'),
-  onConnect: () => {
-    client.subscribe('/topic/shipments/TF1A2B3C4D5E', (message) => {
-      console.log('Received:', JSON.parse(message.body));
-    });
-  },
-});
-
-client.activate();
-```
-
-Run this, then trigger a status update via `curl` (step 3 above) in another terminal — the message should print immediately.
-
-## Running Tests
-
-- `./mvnw test` — fast unit/context tests only, no Docker required.
-- `./mvnw verify` — runs the full suite, including integration tests (`*IT`) that spin up ephemeral PostgreSQL containers via Testcontainers. Requires Docker to be running.
-
-## Known Gotchas (Worth Remembering)
-
-- **Flyway needs a per-database module.** Since Flyway 10, `flyway-core` alone doesn't support any specific database — `flyway-database-postgresql` must be added explicitly.
-- **Self-issued JWTs with a symmetric key need the algorithm declared twice.** Once on the key itself (`OctetSequenceKey.algorithm(JWSAlgorithm.HS256)`, wrapped in `ImmutableJWKSet`, not a bare `ImmutableSecret`), and once when building the token (`JwtEncoderParameters.from(jwsHeader, claims)` — the single-argument `from(claims)` overload silently assumes RS256). Missing either one fails with `JwtEncodingException: Failed to select a JWK signing key`, which surfaces to callers as an opaque `401 Unauthorized` with an empty body — always check the *server* log, not just the HTTP status, when authentication seems to fail for no obvious reason.
-- **`@TransactionalEventListener(phase = AFTER_COMMIT)`, not `@EventListener`.** A plain listener would fire mid-transaction, before Spring knows whether the change will actually be committed — risking a WebSocket broadcast for a status change that later gets rolled back.
+- Backend: `cd backend && ./mvnw verify` — runs the full integration test suite against ephemeral PostgreSQL containers via Testcontainers, including a real end-to-end WebSocket test (opens a STOMP session and asserts a broadcasted event is received).
+- Frontend: no automated test suite yet — a natural next step for this project.
 
 ## License
 

@@ -1,0 +1,20 @@
+@if (isCancelled) {
+  <div class="tracking-cancelled">
+    <mat-icon>cancel</mat-icon>
+    <span>This shipment was cancelled</span>
+  </div>
+} @else {
+  <div class="tracking-progress">
+    @for (stage of stages; track stage.key; let i = $index) {
+      <div class="stage" [class.stage--done]="i <= currentIndex" [class.stage--active]="i === currentIndex">
+        <div class="stage-dot">
+          <mat-icon>{{ stage.icon }}</mat-icon>
+        </div>
+        <span class="stage-label">{{ stage.label }}</span>
+      </div>
+      @if (!$last) {
+        <div class="stage-line" [class.stage-line--done]="i < currentIndex"></div>
+      }
+    }
+  </div>
+}

@@ -1,7 +1,8 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { UserTableComponent } from '../../ui/user-table/user-table.component';
 import { CreateUserFormComponent } from '../../ui/create-user-form/create-user-form.component';
 import { UserActions } from '../../data-access/user.actions';
@@ -11,27 +12,29 @@ import { selectAllUsers, selectUsersError } from '../../data-access/user.selecto
 @Component({
   selector: 'app-user-management',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, UserTableComponent, CreateUserFormComponent],
+  imports: [CommonModule, MatButtonModule, UserTableComponent],
   templateUrl: './user-management.component.html',
+  styleUrl: './user-management.component.scss',
 })
 export class UserManagementComponent implements OnInit {
   private store = inject(Store);
+  private dialog = inject(MatDialog);
 
   users$ = this.store.select(selectAllUsers);
   error$ = this.store.select(selectUsersError);
-  showCreateForm = signal(false);
 
   ngOnInit(): void {
     this.store.dispatch(UserActions.loadUsers());
   }
 
-  toggleCreateForm(): void {
-    this.showCreateForm.update((value) => !value);
-  }
+  onOpenCreateForm(): void {
+    const dialogRef = this.dialog.open(CreateUserFormComponent, { width: '420px' });
 
-  onCreate(request: CreateUserRequest): void {
-    this.store.dispatch(UserActions.createUser({ request }));
-    this.showCreateForm.set(false);
+    dialogRef.afterClosed().subscribe((request: CreateUserRequest | undefined) => {
+      if (request) {
+        this.store.dispatch(UserActions.createUser({ request }));
+      }
+    });
   }
 
   onChangeRole(event: { id: number; role: string }): void {
