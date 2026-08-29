@@ -1,6 +1,4 @@
-package com.joaodev.trackflowapi.auth.service;
-
-import com.joaodev.trackflowapi.common.error.ApiException;
+package com.joaodev.trackflowapi.common.error;
 
 public class InvalidCredentialsException extends RuntimeException implements ApiException {
     public InvalidCredentialsException() {

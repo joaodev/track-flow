@@ -2,46 +2,45 @@ package com.joaodev.trackflowapi.auth.controller;
 
 import com.joaodev.trackflowapi.auth.service.AccountDeactivatedException;
 import com.joaodev.trackflowapi.auth.service.EmailAlreadyRegisteredException;
+import com.joaodev.trackflowapi.auth.service.InvalidCredentialsException;
 import com.joaodev.trackflowapi.auth.service.SelfDeletionNotAllowedException;
 import com.joaodev.trackflowapi.auth.service.UserNotFoundException;
+import com.joaodev.trackflowapi.common.error.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.io.InvalidClassException;
-import java.time.LocalDateTime;
-import java.util.Map;
-
 @RestControllerAdvice
 public class AuthExceptionHandler  {
 
     @ExceptionHandler(EmailAlreadyRegisteredException.class)
-    public ResponseEntity<Map<String, Object>> handleEmailTaken(EmailAlreadyRegisteredException ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorBody(ex.getMessage()));
+    public ResponseEntity<ErrorResponse> handleEmailTaken(EmailAlreadyRegisteredException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(ErrorResponse.of(ex.getErrorCode(), ex.getMessage()));
     }
 
-    @ExceptionHandler(InvalidClassException.class)
-    public ResponseEntity<Map<String, Object>> handleInvalidCredentials(InvalidClassException ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorBody(ex.getMessage()));
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidCredentials(InvalidCredentialsException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(ErrorResponse.of(ex.getErrorCode(), ex.getMessage()));
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleUserNotFound(UserNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorBody(ex.getMessage()));
+    public ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ErrorResponse.of(ex.getErrorCode(), ex.getMessage()));
     }
 
     @ExceptionHandler(AccountDeactivatedException.class)
-    public ResponseEntity<Map<String, Object>> handleDeactivated(AccountDeactivatedException ex) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorBody(ex.getMessage()));
+    public ResponseEntity<ErrorResponse> handleDeactivated(AccountDeactivatedException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ErrorResponse.of(ex.getErrorCode(), ex.getMessage()));
     }
 
     @ExceptionHandler(SelfDeletionNotAllowedException.class)
-    public ResponseEntity<Map<String, Object>> handleSelfDeletion(SelfDeletionNotAllowedException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorBody(ex.getMessage()));
-    }
-
-    private Map<String, Object> errorBody(String message) {
-        return Map.of("timestamp", LocalDateTime.now(), "message", message);
+    public ResponseEntity<ErrorResponse> handleSelfDeletion(SelfDeletionNotAllowedException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ErrorResponse.of(ex.getErrorCode(), ex.getMessage()));
     }
 }
