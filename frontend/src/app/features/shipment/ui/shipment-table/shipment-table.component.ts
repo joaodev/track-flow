@@ -19,6 +19,7 @@ import { MatInputModule } from '@angular/material/input';
 import { Shipment } from '../../data-access/shipment.model';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
+import { TranslatePipe } from '../../../../core/translate.pipe';
 
 @Component({
   selector: 'app-shipment-table',
@@ -34,6 +35,7 @@ import { MatTooltip } from '@angular/material/tooltip';
     MatInputModule,
     MatIcon,
     MatTooltip,
+    TranslatePipe,
   ],
   templateUrl: './shipment-table.component.html',
   styleUrl: './shipment-table.component.scss',

@@ -5,6 +5,7 @@ import { ShipmentService } from './shipment.service';
 import { ShipmentActions } from './shipment.actions';
 import { ShipmentSocketService } from './shipment-socket.service';
 import { isShipmentDeletedEvent, ShipmentSocketEvent } from './shipment-deleted-event.model';
+import { extractErrorCode } from '../../../core/http-error.utils';
 
 
 
@@ -20,7 +21,9 @@ export class ShipmentEffects {
       mergeMap(() =>
         this.shipmentService.getAll().pipe(
           map((shipments) => ShipmentActions.loadShipmentsSuccess({ shipments })),
-          catchError((error) => of(ShipmentActions.loadShipmentsFailure({ error: error.message }))),
+          catchError((error) => of(ShipmentActions.loadShipmentsFailure({
+            error: extractErrorCode(error)
+          }))),
         ),
       ),
     ),
@@ -33,7 +36,7 @@ export class ShipmentEffects {
         this.shipmentService.create(request).pipe(
           map((shipment) => ShipmentActions.createShipmentSuccess({ shipment })),
           catchError((error) =>
-            of(ShipmentActions.createShipmentFailure({ error: error.message })),
+            of(ShipmentActions.createShipmentFailure({ error: extractErrorCode(error) })),
           ),
         ),
       ),
@@ -47,7 +50,7 @@ export class ShipmentEffects {
         this.shipmentService.updateStatus(trackingCode, request).pipe(
           map((shipment) => ShipmentActions.updateShipmentStatusSuccess({ shipment })),
           catchError((error) =>
-            of(ShipmentActions.updateShipmentStatusFailure({ error: error.message })),
+            of(ShipmentActions.updateShipmentStatusFailure({ error: extractErrorCode(error) })),
           ),
         ),
       ),
@@ -60,7 +63,9 @@ export class ShipmentEffects {
       mergeMap(({ trackingCode }) =>
         this.shipmentService.getHistory(trackingCode).pipe(
           map((history) => ShipmentActions.loadHistorySuccess({ history })),
-          catchError((error) => of(ShipmentActions.loadHistoryFailure({ error: error.message }))),
+          catchError((error) => of(ShipmentActions.loadHistoryFailure({
+            error: extractErrorCode(error)
+          }))),
         ),
       ),
     ),
@@ -93,7 +98,7 @@ export class ShipmentEffects {
           catchError((error) =>
             of(
               ShipmentActions.deleteShipmentFailure({
-                error: error.error?.message ?? 'Failed to delete shipment',
+                error: extractErrorCode(error)
               }),
             ),
           ),
@@ -117,7 +122,7 @@ export class ShipmentEffects {
           catchError((error) =>
             of(
               ShipmentActions.loadShipmentFailure({
-                error: error.error?.message ?? 'Shipment not found',
+                error: extractErrorCode(error)
               }),
             ),
           ),

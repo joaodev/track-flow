@@ -9,17 +9,20 @@ import { UserActions } from '../../data-access/user.actions';
 import { CreateUserRequest } from '../../data-access/user.model';
 import { selectAllUsers, selectUsersError } from '../../data-access/user.selector';
 import { ConfirmDialogComponent } from '../../../../shared/confirm-dialog/confirm-dialog.component';
+import { TranslatePipe } from '../../../../core/translate.pipe';
+import { TranslationService } from '../../../../core/translation.service';
 
 @Component({
   selector: 'app-user-management',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, UserTableComponent],
+  imports: [CommonModule, MatButtonModule, UserTableComponent, TranslatePipe],
   templateUrl: './user-management.component.html',
   styleUrl: './user-management.component.scss',
 })
 export class UserManagementComponent implements OnInit {
   private store = inject(Store);
   private dialog = inject(MatDialog);
+  private translation = inject(TranslationService);
 
   users$ = this.store.select(selectAllUsers);
   error$ = this.store.select(selectUsersError);

@@ -1,0 +1,150 @@
+{
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "create": "Crear",
+    "update": "Actualizar",
+    "search": "Buscar",
+    "close": "Cerrar",
+    "active": "Activo",
+    "deactivated": "Desactivado",
+    "activate": "Activar",
+    "deactivate": "Desactivar"
+  },
+  "appShell": {
+    "brand": "Track Flow",
+    "navTrack": "Rastrear",
+    "navShipments": "Envíos",
+    "navUsers": "Usuarios",
+    "logout": "Cerrar Sesión"
+  },
+  "auth": {
+    "login": {
+      "heroTitle": "Consola de Operaciones",
+      "heroDescription": "Supervisa los envíos en tiempo real, actualiza el estado desde la recogida hasta la entrega y mantén a tu equipo sincronizado.",
+      "cardTitle": "Iniciar sesión",
+      "subtitle": "Inicia sesión con tu cuenta de operaciones"
+    },
+    "loginForm": {
+      "emailLabel": "Correo electrónico",
+      "emailError": "Se requiere un correo electrónico válido",
+      "passwordLabel": "Contraseña",
+      "passwordError": "La contraseña es obligatoria",
+      "showPassword": "Mostrar contraseña",
+      "hidePassword": "Ocultar contraseña",
+      "submit": "Iniciar Sesión"
+    },
+    "role": {
+      "ADMIN": "Administrador",
+      "OPS": "Operaciones"
+    }
+  },
+  "shipment": {
+    "list": {
+      "title": "Envíos",
+      "newShipment": "Nuevo Envío",
+      "statTotal": "Total de Envíos",
+      "statInTransit": "En Tránsito",
+      "statDelivered": "Entregados",
+      "statCancelled": "Cancelados"
+    },
+    "table": {
+      "columnTrackingCode": "Código de Rastreo",
+      "columnOrigin": "Origen",
+      "columnDestination": "Destino",
+      "columnCarrier": "Transportista",
+      "columnStatus": "Estado",
+      "columnUpdatedAt": "Actualizado el",
+      "searchLabel": "Buscar",
+      "searchPlaceholder": "Código, origen, transportista...",
+      "updateStatus": "Actualizar Estado",
+      "cancelledLocked": "Los envíos cancelados no se pueden actualizar",
+      "deleteTooltip": "Eliminar envío",
+      "noResults": "No se encontraron envíos para tu búsqueda."
+    },
+    "status": {
+      "CREATED": "Creado",
+      "IN_TRANSIT": "En Tránsito",
+      "OUT_FOR_DELIVERY": "En Reparto",
+      "DELIVERED": "Entregado",
+      "CANCELLED": "Cancelado"
+    },
+    "createForm": {
+      "title": "Nuevo Envío",
+      "originLabel": "Origen",
+      "originError": "El origen es obligatorio",
+      "destinationLabel": "Destino",
+      "destinationError": "El destino es obligatorio",
+      "carrierLabel": "Transportista",
+      "carrierError": "El transportista es obligatorio",
+      "submit": "Crear Envío"
+    },
+    "updateForm": {
+      "title": "Actualizar Estado — {{code}}",
+      "statusLabel": "Estado",
+      "locationLabel": "Ubicación",
+      "descriptionLabel": "Descripción",
+      "submit": "Actualizar"
+    },
+    "detailDialog": {
+      "historyTitle": "Historial"
+    },
+    "track": {
+      "title": "Rastrear Envío",
+      "subtitle": "Consulta cualquier envío por su código de rastreo.",
+      "searchLabel": "Código de Rastreo",
+      "searchPlaceholder": "ej. TF1A2B3C4D5E",
+      "submit": "Rastrear",
+      "historyTitle": "Historial",
+      "cancelledMessage": "Este envío fue cancelado",
+      "noHistory": "Aún no hay historial de rastreo."
+    },
+    "deleteConfirm": {
+      "title": "Eliminar envío",
+      "message": "¿Seguro que deseas eliminar el envío {{code}}? Esta acción no se puede deshacer."
+    }
+  },
+  "user": {
+    "management": {
+      "title": "Gestión de Usuarios",
+      "newUser": "Nuevo Usuario"
+    },
+    "table": {
+      "columnEmail": "Correo electrónico",
+      "columnRole": "Rol",
+      "columnStatus": "Estado",
+      "columnCreatedAt": "Creado el",
+      "searchLabel": "Buscar",
+      "searchPlaceholder": "Correo electrónico...",
+      "deleteTooltip": "Eliminar usuario",
+      "noResults": "No se encontraron usuarios para tu búsqueda."
+    },
+    "createForm": {
+      "title": "Nuevo Usuario",
+      "emailLabel": "Correo electrónico",
+      "emailError": "Se requiere un correo electrónico válido",
+      "passwordLabel": "Contraseña",
+      "passwordError": "Mínimo 8 caracteres",
+      "roleLabel": "Rol",
+      "submit": "Crear Usuario"
+    },
+    "deleteConfirm": {
+      "title": "Eliminar usuario",
+      "message": "¿Seguro que deseas eliminar este usuario? Esta acción no se puede deshacer."
+    }
+  },
+  "confirmDialog": {
+    "defaultConfirmLabel": "Eliminar"
+  },
+  "errors": {
+    "INVALID_CREDENTIALS": "Correo o contraseña inválidos",
+    "USER_NOT_FOUND": "Usuario no encontrado",
+    "ACCOUNT_DEACTIVATED": "Esta cuenta ha sido desactivada",
+    "SELF_DELETION_NOT_ALLOWED": "No puedes eliminar tu propia cuenta",
+    "EMAIL_ALREADY_REGISTERED": "Este correo ya está registrado",
+    "SHIPMENT_NOT_FOUND": "No se encontró ningún envío con ese código",
+    "VALIDATION_FAILED": "Verifica los datos ingresados",
+    "UNKNOWN_ERROR": "Ocurrió un error inesperado. Inténtalo de nuevo."
+  }
+}

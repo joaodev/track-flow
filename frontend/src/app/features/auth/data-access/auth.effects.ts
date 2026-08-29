@@ -5,6 +5,7 @@ import { catchError, map, mergeMap, of, tap } from 'rxjs';
 import { AuthService } from './auth.service';
 import { AuthActions } from './auth.actions';
 import { TokenStorageService } from '../../../core/token-storage.service';
+import { extractErrorCode } from '../../../core/http-error.utils';
 
 @Injectable()
 export class AuthEffects {
@@ -19,7 +20,9 @@ export class AuthEffects {
       mergeMap(({ request }) =>
         this.authService.login(request).pipe(
           map(({ token }) => AuthActions.loginSuccess({ token })),
-          catchError((error) => of(AuthActions.loginFailure({ error: error.message }))),
+          catchError((error) => of(AuthActions.loginFailure({
+            error: extractErrorCode(error)
+          }))),
         ),
       ),
     ),

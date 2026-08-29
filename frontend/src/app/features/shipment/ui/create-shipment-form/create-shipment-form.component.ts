@@ -5,6 +5,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { CreateShipmentRequest } from '../../data-access/shipment.model';
+import { TranslatePipe } from '../../../../core/translate.pipe';
 
 @Component({
   selector: 'app-create-shipment-form',
@@ -15,6 +16,7 @@ import { CreateShipmentRequest } from '../../data-access/shipment.model';
     MatInputModule,
     MatButtonModule,
     MatDialogModule,
+    TranslatePipe,
   ],
   templateUrl: './create-shipment-form.component.html',
   styleUrl: './create-shipment-form.component.scss',

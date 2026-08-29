@@ -3,46 +3,46 @@
 } @else {
   <div class="table-toolbar">
     <mat-form-field appearance="outline" class="filter-field">
-      <mat-label>Search</mat-label>
-      <input matInput (input)="applyFilter($any($event.target).value)" placeholder="Code, origin, carrier..." />
+      <mat-label>{{ 'shipment.table.searchLabel' | translate }}</mat-label>
+      <input matInput (input)="applyFilter($any($event.target).value)" [placeholder]="'shipment.table.searchPlaceholder' | translate" />
     </mat-form-field>
   </div>
 
   <div class="table-scroll">
     <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z1">
       <ng-container matColumnDef="trackingCode">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Tracking Code</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'shipment.table.columnTrackingCode' | translate }}</th>
         <td mat-cell *matCellDef="let shipment" class="mono">
           <button class="link-button" (click)="viewDetails.emit(shipment)">{{ shipment.trackingCode }}</button>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="origin">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Origin</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'shipment.table.columnOrigin' | translate }}</th>
         <td mat-cell *matCellDef="let shipment">{{ shipment.origin }}</td>
       </ng-container>
 
       <ng-container matColumnDef="destination">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Destination</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'shipment.table.columnDestination' | translate }}</th>
         <td mat-cell *matCellDef="let shipment">{{ shipment.destination }}</td>
       </ng-container>
 
       <ng-container matColumnDef="carrier">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Carrier</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'shipment.table.columnCarrier' | translate }}</th>
         <td mat-cell *matCellDef="let shipment">{{ shipment.carrier }}</td>
       </ng-container>
 
       <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'shipment.table.columnStatus' | translate }}</th>
         <td mat-cell *matCellDef="let shipment">
           <span class="status-pill" [class]="'status-pill--' + shipment.status.toLowerCase()">
-            {{ shipment.status }}
+            {{ ('shipment.status.' + shipment.status) | translate }}
           </span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="updatedAt">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Updated At</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'shipment.table.columnUpdatedAt' | translate }}</th>
         <td mat-cell *matCellDef="let shipment">{{ shipment.updatedAt | date: 'dd/MM/yyyy HH:mm' }}</td>
       </ng-container>
 
@@ -51,12 +51,12 @@
         <td mat-cell *matCellDef="let shipment" class="col-center">
           <div class="actions-row">
             @if (shipment.status !== 'CANCELLED') {
-              <button mat-stroked-button color="primary" (click)="updateStatus.emit(shipment)">Update Status</button>
+              <button mat-stroked-button color="primary" (click)="updateStatus.emit(shipment)">{{ 'shipment.table.updateStatus' | translate }}</button>
             } @else {
-              <mat-icon class="action-disabled" matTooltip="Cancelled shipments can't be updated">lock</mat-icon>
+              <mat-icon class="action-disabled" [matTooltip]="'shipment.table.cancelledLocked' | translate">lock</mat-icon>
             }
             @if (isAdmin) {
-              <button mat-icon-button color="warn" (click)="deleteShipment.emit(shipment)" matTooltip="Delete shipment">
+              <button mat-icon-button color="warn" (click)="deleteShipment.emit(shipment)" [matTooltip]="'shipment.table.deleteTooltip' | translate">
                 <mat-icon>delete</mat-icon>
               </button>
             }
@@ -72,7 +72,7 @@
       ></tr>
 
       <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell no-data" [attr.colspan]="displayedColumns.length">No shipments match your search.</td>
+        <td class="mat-cell no-data" [attr.colspan]="displayedColumns.length">{{ 'shipment.table.noResults' | translate }}</td>
       </tr>
     </table>
   </div>

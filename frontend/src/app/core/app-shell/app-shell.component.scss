@@ -112,3 +112,33 @@ mat-sidenav-content {
     padding: 16px;
   }
 }
+
+.sidebar-lang {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.lang-button {
+  flex: 1;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 0;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.lang-button:hover {
+  color: var(--text-primary);
+}
+
+.lang-button--active {
+  background: var(--card-blue);
+  color: var(--content-bg);
+}

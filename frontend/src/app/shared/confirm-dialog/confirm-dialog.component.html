@@ -3,6 +3,6 @@
   <p>{{ data.message }}</p>
 </div>
 <div mat-dialog-actions align="end">
-  <button mat-button (click)="onCancel()">Cancel</button>
-  <button mat-raised-button color="warn" (click)="onConfirm()">{{ data.confirmLabel ?? 'Delete' }}</button>
+  <button mat-button (click)="onCancel()">{{ 'common.cancel' | translate }}</button>
+  <button mat-raised-button color="warn" (click)="onConfirm()">{{ data.confirmLabel ?? ('confirmDialog.defaultConfirmLabel' | translate) }}</button>
 </div>

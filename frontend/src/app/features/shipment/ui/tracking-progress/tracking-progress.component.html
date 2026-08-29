@@ -1,7 +1,7 @@
 @if (isCancelled) {
   <div class="tracking-cancelled">
     <mat-icon>cancel</mat-icon>
-    <span>This shipment was cancelled</span>
+    <span>{{ 'shipment.track.cancelledMessage' | translate }}</span>
   </div>
 } @else {
   <div class="tracking-progress">
@@ -10,7 +10,7 @@
         <div class="stage-dot">
           <mat-icon>{{ stage.icon }}</mat-icon>
         </div>
-        <span class="stage-label">{{ stage.label }}</span>
+        <span class="stage-label">{{ ('shipment.status.' + stage.key) | translate }}</span>
       </div>
       @if (!$last) {
         <div class="stage-line" [class.stage-line--done]="i < currentIndex"></div>

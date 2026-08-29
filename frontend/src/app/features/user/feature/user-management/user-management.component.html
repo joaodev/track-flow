@@ -1,7 +1,7 @@
 <div class="user-management-page">
   <header>
-    <h1>User Management</h1>
-    <button mat-raised-button color="primary" (click)="onOpenCreateForm()">New User</button>
+    <h1>{{ 'user.management.title' | translate }}</h1>
+    <button mat-raised-button color="primary" (click)="onOpenCreateForm()">{{ 'user.management.newUser' | translate }}</button>
   </header>
 
   @if (error$ | async; as error) {

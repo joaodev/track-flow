@@ -8,6 +8,7 @@ import { TrackingTimelineComponent } from '../tracking-timeline/tracking-timelin
 import { ShipmentActions } from '../../data-access/shipment.actions';
 import { selectHistory } from '../../data-access/shipment.selectors';
 import { Shipment } from '../../data-access/shipment.model';
+import { TranslatePipe } from '../../../../core/translate.pipe';
 
 export interface ShipmentDetailDialogData {
   shipment: Shipment;
@@ -22,6 +23,7 @@ export interface ShipmentDetailDialogData {
     MatButtonModule,
     TrackingProgressComponent,
     TrackingTimelineComponent,
+    TranslatePipe,
   ],
   templateUrl: './shipment-detail-dialog.component.html',
   styleUrl: './shipment-detail-dialog.component.scss',

@@ -1,8 +1,8 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <mat-form-field appearance="outline">
-    <mat-label>Tracking Code</mat-label>
-    <input matInput formControlName="trackingCode" placeholder="e.g. TF1A2B3C4D5E" />
+    <mat-label>{{ 'shipment.track.searchLabel' | translate }}</mat-label>
+    <input matInput formControlName="trackingCode" [placeholder]="'shipment.track.searchPlaceholder' | translate" />
   </mat-form-field>
 
-  <button mat-raised-button color="primary" type="submit">Track</button>
+  <button mat-raised-button color="primary" type="submit">{{ 'shipment.track.submit' | translate }}</button>
 </form>

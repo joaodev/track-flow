@@ -1,6 +1,6 @@
 <div class="track-shipment-page">
-  <h1>Track Shipment</h1>
-  <p class="page-subtitle">Look up any shipment by its tracking code.</p>
+  <h1>{{ 'shipment.track.title' | translate }}</h1>
+  <p class="page-subtitle">{{ 'shipment.track.subtitle' | translate }}</p>
 
   <app-track-search-form (search)="onSearch($event)" />
 
@@ -20,7 +20,7 @@
 
       <app-tracking-progress [status]="shipment.status" />
 
-      <h3>History</h3>
+      <h3>{{ 'shipment.track.historyTitle' | translate }}</h3>
       <app-tracking-timeline [events]="(history$ | async) ?? []" />
     </div>
   }

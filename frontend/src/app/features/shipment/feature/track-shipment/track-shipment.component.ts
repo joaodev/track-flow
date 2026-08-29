@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import { Shipment, TrackingEvent } from '../../data-access/shipment.model';
 import { ShipmentActions } from '../../data-access/shipment.actions';
 import { TrackingProgressComponent } from '../../ui/tracking-progress/tracking-progress.component';
+import { TranslatePipe } from '../../../../core/translate.pipe';
 
 @Component({
   selector: 'app-track-shipment',
@@ -17,6 +18,7 @@ import { TrackingProgressComponent } from '../../ui/tracking-progress/tracking-p
     TrackSearchFormComponent,
     TrackingTimelineComponent,
     TrackingProgressComponent,
+    TranslatePipe,
   ],
   templateUrl: './track-shipment.component.html',
   styleUrl: './track-shipment.component.scss'

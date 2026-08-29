@@ -6,20 +6,27 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { UpdateShipmentStatusRequest } from '../../data-access/shipment.model';
+import { TranslatePipe } from '../../../../core/translate.pipe';
 
 export interface UpdateStatusDialogData {
   trackingCode: string;
   currentStatus: string;
 }
 
-const STATUS_OPTIONS = [
-  'CREATED', 'IN_TRANSIT', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED'
-];
+const STATUS_OPTIONS = ['CREATED', 'IN_TRANSIT', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED'];
 
 @Component({
   selector: 'app-update-status-form',
   standalone: true,
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatDialogModule],
+  imports: [
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatDialogModule,
+    TranslatePipe,
+  ],
   templateUrl: './update-status-form.component.html',
 })
 export class UpdateStatusFormComponent {
@@ -33,7 +40,7 @@ export class UpdateStatusFormComponent {
     status: [this.data.currentStatus, Validators.required],
     location: [''],
     description: [''],
-  })
+  });
 
   onSubmit(): void {
     if (this.form.invalid) {

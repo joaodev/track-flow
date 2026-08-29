@@ -1,0 +1,150 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "create": "Create",
+    "update": "Update",
+    "search": "Search",
+    "close": "Close",
+    "active": "Active",
+    "deactivated": "Deactivated",
+    "activate": "Activate",
+    "deactivate": "Deactivate"
+  },
+  "appShell": {
+    "brand": "Track Flow",
+    "navTrack": "Track",
+    "navShipments": "Shipments",
+    "navUsers": "Users",
+    "logout": "Log Out"
+  },
+  "auth": {
+    "login": {
+      "heroTitle": "Operations Console",
+      "heroDescription": "Monitor shipments in real time, update status from pickup to delivery, and keep your team in sync.",
+      "cardTitle": "Log in",
+      "subtitle": "Sign in with your operations account"
+    },
+    "loginForm": {
+      "emailLabel": "Email",
+      "emailError": "A valid email is required",
+      "passwordLabel": "Password",
+      "passwordError": "Password is required",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
+      "submit": "Log In"
+    },
+    "role": {
+      "ADMIN": "Administrator",
+      "OPS": "Operations"
+    }
+  },
+  "shipment": {
+    "list": {
+      "title": "Shipments",
+      "newShipment": "New Shipment",
+      "statTotal": "Total Shipments",
+      "statInTransit": "In Transit",
+      "statDelivered": "Delivered",
+      "statCancelled": "Cancelled"
+    },
+    "table": {
+      "columnTrackingCode": "Tracking Code",
+      "columnOrigin": "Origin",
+      "columnDestination": "Destination",
+      "columnCarrier": "Carrier",
+      "columnStatus": "Status",
+      "columnUpdatedAt": "Updated At",
+      "searchLabel": "Search",
+      "searchPlaceholder": "Code, origin, carrier...",
+      "updateStatus": "Update Status",
+      "cancelledLocked": "Cancelled shipments can't be updated",
+      "deleteTooltip": "Delete shipment",
+      "noResults": "No shipments match your search."
+    },
+    "status": {
+      "CREATED": "Created",
+      "IN_TRANSIT": "In Transit",
+      "OUT_FOR_DELIVERY": "Out for Delivery",
+      "DELIVERED": "Delivered",
+      "CANCELLED": "Cancelled"
+    },
+    "createForm": {
+      "title": "New Shipment",
+      "originLabel": "Origin",
+      "originError": "Origin is required",
+      "destinationLabel": "Destination",
+      "destinationError": "Destination is required",
+      "carrierLabel": "Carrier",
+      "carrierError": "Carrier is required",
+      "submit": "Create Shipment"
+    },
+    "updateForm": {
+      "title": "Update Status — {{code}}",
+      "statusLabel": "Status",
+      "locationLabel": "Location",
+      "descriptionLabel": "Description",
+      "submit": "Update"
+    },
+    "detailDialog": {
+      "historyTitle": "History"
+    },
+    "track": {
+      "title": "Track Shipment",
+      "subtitle": "Look up any shipment by its tracking code.",
+      "searchLabel": "Tracking Code",
+      "searchPlaceholder": "e.g. TF1A2B3C4D5E",
+      "submit": "Track",
+      "historyTitle": "History",
+      "cancelledMessage": "This shipment was cancelled",
+      "noHistory": "No tracking history yet."
+    },
+    "deleteConfirm": {
+      "title": "Delete shipment",
+      "message": "Are you sure you want to delete shipment {{code}}? This cannot be undone."
+    }
+  },
+  "user": {
+    "management": {
+      "title": "User Management",
+      "newUser": "New User"
+    },
+    "table": {
+      "columnEmail": "Email",
+      "columnRole": "Role",
+      "columnStatus": "Status",
+      "columnCreatedAt": "Created At",
+      "searchLabel": "Search",
+      "searchPlaceholder": "Email...",
+      "deleteTooltip": "Delete user",
+      "noResults": "No users match your search."
+    },
+    "createForm": {
+      "title": "New User",
+      "emailLabel": "Email",
+      "emailError": "A valid email is required",
+      "passwordLabel": "Password",
+      "passwordError": "At least 8 characters",
+      "roleLabel": "Role",
+      "submit": "Create User"
+    },
+    "deleteConfirm": {
+      "title": "Delete user",
+      "message": "Are you sure you want to delete this user? This cannot be undone."
+    }
+  },
+  "confirmDialog": {
+    "defaultConfirmLabel": "Delete"
+  },
+  "errors": {
+    "INVALID_CREDENTIALS": "Invalid email or password",
+    "USER_NOT_FOUND": "User not found",
+    "ACCOUNT_DEACTIVATED": "This account has been deactivated",
+    "SELF_DELETION_NOT_ALLOWED": "You cannot delete your own account",
+    "EMAIL_ALREADY_REGISTERED": "This email is already registered",
+    "SHIPMENT_NOT_FOUND": "No shipment found with that code",
+    "VALIDATION_FAILED": "Please check the information provided",
+    "UNKNOWN_ERROR": "Something went wrong. Please try again."
+  }
+}

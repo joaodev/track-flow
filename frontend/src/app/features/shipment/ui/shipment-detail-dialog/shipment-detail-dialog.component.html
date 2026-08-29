@@ -8,10 +8,10 @@
 
   <app-tracking-progress [status]="data.shipment.status" />
 
-  <h3>History</h3>
+  <h3>{{ 'shipment.detailDialog.historyTitle' | translate }}</h3>
   <app-tracking-timeline [events]="(history$ | async) ?? []" />
 </div>
 
 <div mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close>Close</button>
+  <button mat-button mat-dialog-close>{{ 'common.close' | translate }}</button>
 </div>

@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, isDevMode } from '@angular/core';
+import { ApplicationConfig, provideBrowserGlobalErrorListeners, isDevMode, provideAppInitializer, inject } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideState, provideStore } from '@ngrx/store';
@@ -12,12 +12,17 @@ import { AuthEffects } from './features/auth/data-access/auth.effects';
 import { authInterceptor } from './features/auth/data-access/auth.interceptor';
 import { userFeature } from './features/user/data-access/user.reducer';
 import { UserEffects } from './features/user/data-access/user.effects';
+import { TranslationService } from './core/translation.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(withInterceptors([authInterceptor])),
+    provideAppInitializer(() => {
+      const translation = inject(TranslationService);
+      return translation.loadAll();
+    }),
     provideStore(),
     provideState(shipmentFeature),
     provideState(authFeature),

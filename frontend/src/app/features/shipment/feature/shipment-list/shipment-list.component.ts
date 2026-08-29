@@ -22,17 +22,20 @@ import {
 } from '../../data-access/shipment.model';
 import { selectIsAdmin } from '../../../auth/data-access/auth.selectors';
 import { ConfirmDialogComponent } from '../../../../shared/confirm-dialog/confirm-dialog.component';
+import { TranslatePipe } from '../../../../core/translate.pipe';
+import { TranslationService } from '../../../../core/translation.service';
 
 @Component({
   selector: 'app-shipment-list',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, ShipmentTableComponent, StatCardComponent],
+  imports: [CommonModule, MatButtonModule, ShipmentTableComponent, StatCardComponent, TranslatePipe],
   templateUrl: './shipment-list.component.html',
   styleUrl: './shipment-list.component.scss',
 })
 export class ShipmentListComponent implements OnInit {
   private store = inject(Store);
   private dialog = inject(MatDialog);
+  private translation = inject(TranslationService);
 
   shipments$ = this.store.select(selectAllShipments);
   loading$ = this.store.select(selectLoading);

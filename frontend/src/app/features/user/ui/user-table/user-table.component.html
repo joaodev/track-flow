@@ -1,42 +1,42 @@
 <div class="table-toolbar">
   <mat-form-field appearance="outline" class="filter-field">
-    <mat-label>Search</mat-label>
-    <input matInput (input)="applyFilter($any($event.target).value)" placeholder="Email..." />
+    <mat-label>{{ 'user.table.searchLabel' | translate }}</mat-label>
+    <input matInput (input)="applyFilter($any($event.target).value)" [placeholder]="'user.table.searchPlaceholder' | translate" />
   </mat-form-field>
 </div>
 
 <div class="table-scroll">
   <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z1">
     <ng-container matColumnDef="email">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'user.table.columnEmail' | translate }}</th>
       <td mat-cell *matCellDef="let user">{{ user.email }}</td>
     </ng-container>
 
     <ng-container matColumnDef="role">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Role</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'user.table.columnRole' | translate }}</th>
       <td mat-cell *matCellDef="let user">
         <mat-select
           [value]="user.role"
           (selectionChange)="changeRole.emit({ id: user.id, role: $event.value })"
         >
           @for (role of roleOptions; track role) {
-            <mat-option [value]="role">{{ role }}</mat-option>
+            <mat-option [value]="role">{{ ('auth.role.' + role) | translate }}</mat-option>
           }
         </mat-select>
       </td>
     </ng-container>
 
     <ng-container matColumnDef="active">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'user.table.columnStatus' | translate }}</th>
       <td mat-cell *matCellDef="let user">
         <span class="status-pill" [class]="user.active ? 'status-pill--delivered' : 'status-pill--cancelled'">
-          {{ user.active ? 'Active' : 'Deactivated' }}
+          {{ (user.active ? 'common.active' : 'common.deactivated') | translate }}
         </span>
       </td>
     </ng-container>
 
     <ng-container matColumnDef="createdAt">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Created At</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'user.table.columnCreatedAt' | translate }}</th>
       <td mat-cell *matCellDef="let user">{{ user.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
     </ng-container>
 
@@ -49,9 +49,9 @@
             [color]="user.active ? 'warn' : 'primary'"
             (click)="toggleActive.emit({ id: user.id, active: !user.active })"
           >
-            {{ user.active ? 'Deactivate' : 'Activate' }}
+            {{ (user.active ? 'common.deactivate' : 'common.activate') | translate }}
           </button>
-          <button mat-icon-button color="warn" (click)="deleteUser.emit(user.id)" matTooltip="Delete user">
+          <button mat-icon-button color="warn" (click)="deleteUser.emit(user.id)" [matTooltip]="'user.table.deleteTooltip' | translate">
             <mat-icon>delete</mat-icon>
           </button>
         </div>
@@ -62,7 +62,7 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 
     <tr class="mat-row" *matNoDataRow>
-      <td class="mat-cell no-data" [attr.colspan]="displayedColumns.length">No users match your search.</td>
+      <td class="mat-cell no-data" [attr.colspan]="displayedColumns.length">{{ 'user.table.noResults' | translate }}</td>
     </tr>
   </table>
 </div>

@@ -9,29 +9,41 @@
     <div class="sidebar-inner">
       <div class="sidebar-brand">
         <mat-icon>local_shipping</mat-icon>
-        <span>Track Flow</span>
+        <span>{{ 'appShell.brand' | translate }}</span>
       </div>
 
       <nav class="sidebar-nav">
-        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="isMobile() && drawer.close()">
-          <mat-icon>inventory_2</mat-icon>
-          <span>Shipments</span>
-        </a>
         <a routerLink="/track" routerLinkActive="active" (click)="isMobile() && drawer.close()">
           <mat-icon>search</mat-icon>
-          <span>Track</span>
+          <span>{{ 'appShell.navTrack' | translate }}</span>
+        </a>
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="isMobile() && drawer.close()">
+          <mat-icon>inventory_2</mat-icon>
+          <span>{{ 'appShell.navShipments' | translate }}</span>
         </a>
         @if (isAdmin$ | async) {
           <a routerLink="/admin/users" routerLinkActive="active" (click)="isMobile() && drawer.close()">
             <mat-icon>group</mat-icon>
-            <span>Users</span>
+            <span>{{ 'appShell.navUsers' | translate }}</span>
           </a>
         }
       </nav>
 
+      <div class="sidebar-lang">
+        @for (lang of languages; track lang) {
+          <button
+            class="lang-button"
+            [class.lang-button--active]="currentLang() === lang"
+            (click)="setLang(lang)"
+          >
+            {{ lang.toUpperCase() }}
+          </button>
+        }
+      </div>
+
       <button class="sidebar-logout" (click)="onLogout()">
         <mat-icon>logout</mat-icon>
-        <span>Log Out</span>
+        <span>{{ 'appShell.logout' | translate }}</span>
       </button>
     </div>
   </mat-sidenav>
@@ -44,7 +56,7 @@
         </button>
         <span class="mobile-toolbar-brand">
           <mat-icon>local_shipping</mat-icon>
-          Track Flow
+          {{ 'appShell.brand' | translate }}
         </span>
       </mat-toolbar>
     }

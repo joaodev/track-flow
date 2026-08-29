@@ -11,6 +11,8 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { map, shareReplay } from 'rxjs';
 import { selectIsAdmin } from '../../features/auth/data-access/auth.selectors';
 import { AuthActions } from '../../features/auth/data-access/auth.actions';
+import { TranslatePipe } from '../translate.pipe';
+import { Lang, TranslationService } from '../translation.service';
 
 @Component({
   selector: 'app-shell',
@@ -24,6 +26,7 @@ import { AuthActions } from '../../features/auth/data-access/auth.actions';
     MatSidenavModule,
     MatToolbarModule,
     MatButtonModule,
+    TranslatePipe,
   ],
   templateUrl: './app-shell.component.html',
   styleUrl: './app-shell.component.scss',
@@ -31,8 +34,11 @@ import { AuthActions } from '../../features/auth/data-access/auth.actions';
 export class AppShellComponent {
   private store = inject(Store);
   private breakpointObserver = inject(BreakpointObserver);
+  private translation = inject(TranslationService);
 
   isAdmin$ = this.store.select(selectIsAdmin);
+  currentLang = this.translation.currentLang;
+  languages: Lang[] = ['pt', 'en', 'es'];
 
   isMobile = toSignal(
     this.breakpointObserver.observe('(max-width: 900px)').pipe(
@@ -41,6 +47,10 @@ export class AppShellComponent {
     ),
     { initialValue: false },
   );
+
+  setLang(lang: Lang): void {
+    this.translation.setLang(lang);
+  }
 
   onLogout(): void {
     this.store.dispatch(AuthActions.logout());

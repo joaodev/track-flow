@@ -1,14 +1,14 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <mat-form-field appearance="outline">
-    <mat-label>Email</mat-label>
+    <mat-label>{{ 'auth.loginForm.emailLabel' | translate }}</mat-label>
     <input matInput formControlName="email" type="email" name="username" autocomplete="username" />
     @if (form.controls.email.invalid && form.controls.email.touched) {
-      <mat-error>A valid email is required</mat-error>
+      <mat-error>{{ 'auth.loginForm.emailError' | translate }}</mat-error>
     }
   </mat-form-field>
 
   <mat-form-field appearance="outline">
-    <mat-label>Password</mat-label>
+    <mat-label>{{ 'auth.loginForm.passwordLabel' | translate }}</mat-label>
     <input
       matInput
       formControlName="password"
@@ -21,14 +21,14 @@
       matSuffix
       type="button"
       (click)="togglePasswordVisibility()"
-      [attr.aria-label]="hidePassword ? 'Show password' : 'Hide password'"
+      [attr.aria-label]="hidePassword ? ('auth.loginForm.showPassword' | translate) : ('auth.loginForm.hidePassword' | translate)"
     >
       <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
     </button>
     @if (form.controls.password.invalid && form.controls.password.touched) {
-      <mat-error>Password is required</mat-error>
+      <mat-error>{{ 'auth.loginForm.passwordError' | translate }}</mat-error>
     }
   </mat-form-field>
 
-  <button mat-raised-button color="primary" type="submit">Log In</button>
+  <button mat-raised-button color="primary" type="submit">{{ 'auth.loginForm.submit' | translate }}</button>
 </form>

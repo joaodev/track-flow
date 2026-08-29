@@ -5,7 +5,7 @@
       <div class="timeline-content">
         <div class="timeline-top">
           <span class="status-pill" [class]="'status-pill--' + event.status.toLowerCase()">
-            {{ event.status }}
+            {{ ('shipment.status.' + event.status) | translate }}
           </span>
           <span class="timeline-time">{{ event.occurredAt | date: 'dd/MM/yyyy HH:mm' }}</span>
         </div>
@@ -20,6 +20,6 @@
       </div>
     </li>
   } @empty {
-    <li>No tracking history yet.</li>
+    <li>{{ 'shipment.track.noHistory' | translate }}</li>
   }
 </ul>

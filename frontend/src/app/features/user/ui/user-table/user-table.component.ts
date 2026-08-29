@@ -19,6 +19,7 @@ import { MatInputModule } from '@angular/material/input';
 import { User } from '../../data-access/user.model';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
+import { TranslatePipe } from '../../../../core/translate.pipe';
 
 @Component({
   selector: 'app-user-table',
@@ -34,6 +35,7 @@ import { MatTooltip } from '@angular/material/tooltip';
     MatInputModule,
     MatIcon,
     MatTooltip,
+    TranslatePipe
   ],
   templateUrl: './user-table.component.html',
   styleUrl: './user-table.component.scss',

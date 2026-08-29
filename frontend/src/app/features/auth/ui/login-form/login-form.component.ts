@@ -4,7 +4,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { LoginRequest } from '../../../auth/data-access/auth.model';
+import { TranslatePipe } from '../../../../core/translate.pipe';
+import { LoginRequest } from '../../data-access/auth.model';
 
 @Component({
   selector: 'app-login-form',
@@ -15,6 +16,7 @@ import { LoginRequest } from '../../../auth/data-access/auth.model';
     MatInputModule,
     MatButtonModule,
     MatIconModule,
+    TranslatePipe,
   ],
   templateUrl: './login-form.component.html',
   styleUrl: 'login-form.component.scss',

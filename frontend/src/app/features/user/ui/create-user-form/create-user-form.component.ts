@@ -6,6 +6,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { CreateUserRequest } from '../../data-access/user.model';
+import { TranslatePipe } from '../../../../core/translate.pipe';
 
 @Component({
   selector: 'app-create-user-form',
@@ -17,6 +18,7 @@ import { CreateUserRequest } from '../../data-access/user.model';
     MatSelectModule,
     MatButtonModule,
     MatDialogModule,
+    TranslatePipe
   ],
   templateUrl: './create-user-form.component.html',
   styleUrl: './create-user-form.component.scss',

@@ -3,20 +3,20 @@
     <div class="login-brand-content">
       <div class="brand-logo">
         <mat-icon>local_shipping</mat-icon>
-        <span>Track Flow</span>
+        <span>{{ 'appShell.brand' | translate }}</span>
       </div>
-      <h1>Operations Console</h1>
-      <p>Monitor shipments in real time, update status from pickup to delivery, and keep your team in sync.</p>
+      <h1>{{ 'auth.login.heroTitle' | translate }}</h1>
+      <p>{{ 'auth.login.heroDescription' | translate }}</p>
     </div>
   </div>
 
   <div class="login-panel">
     <div class="login-card">
-      <h2>Log in</h2>
-      <p class="login-subtitle">Sign in with your operations account</p>
+      <h2>{{ 'auth.login.cardTitle' | translate }}</h2>
+      <p class="login-subtitle">{{ 'auth.login.subtitle' | translate }}</p>
 
       @if (error$ | async; as error) {
-        <div class="login-error">{{ error }}</div>
+        <div class="login-error">{{ ('errors.' + error) | translate }}</div>
       }
 
       <app-login-form (login)="onLogin($event)" />
