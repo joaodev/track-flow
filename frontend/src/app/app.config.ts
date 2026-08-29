@@ -13,6 +13,8 @@ import { authInterceptor } from './features/auth/data-access/auth.interceptor';
 import { userFeature } from './features/user/data-access/user.reducer';
 import { UserEffects } from './features/user/data-access/user.effects';
 import { TranslationService } from './core/translation.service';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { AppPaginatorIntl } from './core/app-paginator-intl.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -29,5 +31,6 @@ export const appConfig: ApplicationConfig = {
     provideState(userFeature),
     provideEffects(ShipmentEffects, AuthEffects, UserEffects),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
+    { provide: MatPaginatorIntl, useClass: AppPaginatorIntl },
   ],
 };

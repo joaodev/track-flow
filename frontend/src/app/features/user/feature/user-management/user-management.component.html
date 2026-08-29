@@ -5,7 +5,7 @@
   </header>
 
   @if (error$ | async; as error) {
-    <p>{{ error }}</p>
+    <p>{{ ('errors.' + error) | translate }}</p>
   }
 
   <app-user-table

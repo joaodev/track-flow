@@ -3,6 +3,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, mergeMap, of } from 'rxjs';
 import { UserService } from './user.service';
 import { UserActions } from './user.actions';
+import { extractErrorCode } from '../../../core/http-error.utils';
 
 @Injectable()
 export class UserEffects {
@@ -16,7 +17,7 @@ export class UserEffects {
         this.userService.getAll().pipe(
           map((users) => UserActions.loadUsersSuccess({ users })),
           catchError((error) =>
-            of(UserActions.loadUsersFailure({ error: error?.message ?? 'Failed to load users' })),
+            of(UserActions.loadUsersFailure({ error: extractErrorCode(error) })),
           ),
         ),
       ),
@@ -32,7 +33,7 @@ export class UserEffects {
           catchError((error) =>
             of(
               UserActions.createUserFailure({
-                error: error.error?.message ?? 'Failed to create user',
+                error: extractErrorCode(error)
               }),
             ),
           ),
@@ -50,7 +51,7 @@ export class UserEffects {
           catchError((error) =>
             of(
               UserActions.changeRoleFailure({
-                error: error.error?.message ?? 'Failed to change role',
+                error: extractErrorCode(error),
               }),
             ),
           ),
@@ -68,7 +69,7 @@ export class UserEffects {
           catchError((error) =>
             of(
               UserActions.setActiveFailure({
-                error: error.error?.message ?? 'Failed to update user',
+                error: extractErrorCode(error),
               }),
             ),
           ),
@@ -86,7 +87,7 @@ export class UserEffects {
           catchError((error) =>
             of(
               UserActions.deleteUserFailure({
-                error: error.error?.message ?? 'Failed to delete user',
+                error: extractErrorCode(error),
               }),
             ),
           ),

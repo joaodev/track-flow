@@ -10,7 +10,15 @@
     "active": "Activo",
     "deactivated": "Desactivado",
     "activate": "Activar",
-    "deactivate": "Desactivar"
+    "deactivate": "Desactivar",
+    "pagination": {
+      "itemsPerPage": "Elementos por página",
+      "nextPage": "Página siguiente",
+      "previousPage": "Página anterior",
+      "firstPage": "Primera página",
+      "lastPage": "Última página",
+      "of": "de"
+    }
   },
   "appShell": {
     "brand": "Track Flow",

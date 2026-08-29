@@ -155,7 +155,7 @@ Cada exceção de domínio implementa `ApiException` (`common/error/ApiException
 | errorCode | Status HTTP | Módulo |
 |---|---|---|
 | `INVALID_CREDENTIALS` | 401 | auth |
-| `EMAIL_ALREADY_REGISTERED` | 401 | auth |
+| `EMAIL_ALREADY_REGISTERED` | 409 | auth |
 | `USER_NOT_FOUND` | 404 | auth |
 | `ACCOUNT_DEACTIVATED` | 403 | auth |
 | `SELF_DELETION_NOT_ALLOWED` | 409 | auth |
