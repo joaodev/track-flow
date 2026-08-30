@@ -14,6 +14,7 @@ export interface CreateProductRequest {
   name: string;
   description?: string;
   unitPrice: number;
+  initialQuantity?: number;
 }
 
 export interface UpdateProductRequest {

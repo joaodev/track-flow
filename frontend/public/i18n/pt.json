@@ -124,10 +124,13 @@
       "columnName": "Nome",
       "columnPrice": "Preço",
       "columnStatus": "Status",
+      "columnStock": "Estoque",
+      "adjustStockTooltip": "Ajustar estoque",
       "searchLabel": "Buscar",
       "searchPlaceholder": "SKU, nome...",
       "editTooltip": "Editar produto",
-      "noResults": "Nenhum produto encontrado para sua busca."
+      "noResults": "Nenhum produto encontrado para sua busca.",
+      "deleteTooltip": "Excluir produto"
     },
     "form": {
       "createTitle": "Novo Produto",
@@ -139,9 +142,26 @@
       "descriptionLabel": "Descrição",
       "priceLabel": "Preço Unitário",
       "priceError": "Informe um preço válido",
+      "initialQuantityLabel": "Quantidade Inicial",
       "submitCreate": "Criar Produto",
       "submitUpdate": "Salvar Alterações"
+    },
+    "deleteConfirm": {
+      "title": "Excluir produto",
+      "message": "Tem certeza que deseja excluir o produto {{name}}? Esta ação não pode ser desfeita."
     }
+  },
+  "inventory": {
+    "form": {
+      "title": "Ajustar Estoque — {{name}}",
+      "onHand": "Em estoque",
+      "reserved": "Reservado",
+      "available": "Disponível",
+      "deltaLabel": "Quantidade",
+      "deltaHint": "Positivo para repor, negativo para corrigir/dar baixa",
+      "submit": "Ajustar"
+    },
+    "lowStockToast": "Estoque baixo no produto #{{productId}}: {{available}} unidades disponíveis"
   },
   "user": {
     "management": {
@@ -185,6 +205,11 @@
     "VALIDATION_FAILED": "Verifique os dados informados",
     "UNKNOWN_ERROR": "Ocorreu um erro inesperado. Tente novamente.",
     "PRODUCT_NOT_FOUND": "Produto não encontrado",
-    "SKU_ALREADY_EXISTS": "Já existe um produto com esse SKU"
+    "SKU_ALREADY_EXISTS": "Já existe um produto com esse SKU",
+    "INVENTORY_NOT_FOUND": "Registro de estoque não encontrado",
+    "INSUFFICIENT_STOCK": "Ajuste deixaria o estoque negativo",
+    "STOCK_CONFLICT": "Esse estoque foi atualizado por outra pessoa ao mesmo tempo. Tente novamente.",
+    "ACCESS_DENIED": "Você não tem permissão para realizar esta ação",
+    "UNAUTHENTICATED": "Autenticação necessária para acessar este recurso"
   }
 }

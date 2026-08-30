@@ -124,10 +124,13 @@
       "columnName": "Nombre",
       "columnPrice": "Precio",
       "columnStatus": "Estado",
+      "columnStock": "Existencias",
+      "adjustStockTooltip": "Ajustar existencias",
       "searchLabel": "Buscar",
       "searchPlaceholder": "SKU, nombre...",
       "editTooltip": "Editar producto",
-      "noResults": "No se encontraron productos para tu búsqueda."
+      "noResults": "No se encontraron productos para tu búsqueda.",
+      "deleteTooltip": "Eliminar producto"
     },
     "form": {
       "createTitle": "Nuevo Producto",
@@ -138,10 +141,27 @@
       "nameError": "El nombre es obligatorio",
       "descriptionLabel": "Descripción",
       "priceLabel": "Precio Unitario",
+      "initialQuantityLabel": "Cantidad Inicial",
       "priceError": "Ingresa un precio válido",
       "submitCreate": "Crear Producto",
       "submitUpdate": "Guardar Cambios"
+    },
+    "deleteConfirm": {
+      "title": "Eliminar producto",
+      "message": "¿Seguro que deseas eliminar {{name}}? Esta acción no se puede deshacer."
     }
+  },
+  "inventory": {
+    "form": {
+      "title": "Ajustar Existencias — {{name}}",
+      "onHand": "En existencia",
+      "reserved": "Reservado",
+      "available": "Disponible",
+      "deltaLabel": "Cantidad",
+      "deltaHint": "Positivo para reponer, negativo para corregir/dar de baja",
+      "submit": "Ajustar"
+    },
+    "lowStockToast": "Existencias bajas en el producto #{{productId}}: {{available}} unidades disponibles"
   },
   "user": {
     "management": {
@@ -185,6 +205,11 @@
     "VALIDATION_FAILED": "Verifica los datos ingresados",
     "UNKNOWN_ERROR": "Ocurrió un error inesperado. Inténtalo de nuevo.",
     "PRODUCT_NOT_FOUND": "Producto no encontrado",
-    "SKU_ALREADY_EXISTS": "Ya existe un producto con ese SKU"
+    "SKU_ALREADY_EXISTS": "Ya existe un producto con ese SKU",
+    "INVENTORY_NOT_FOUND": "Registro de existencias no encontrado",
+    "INSUFFICIENT_STOCK": "Este ajuste dejaría las existencias en negativo",
+    "STOCK_CONFLICT": "Estas existencias fueron actualizadas por otra persona al mismo tiempo. Inténtalo de nuevo.",
+    "ACCESS_DENIED": "No tienes permiso para realizar esta acción",
+    "UNAUTHENTICATED": "Se requiere autenticación para acceder a este recurso"
   }
 }

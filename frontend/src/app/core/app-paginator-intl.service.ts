@@ -11,10 +11,10 @@ export class AppPaginatorIntl extends MatPaginatorIntl {
     effect(() => {
       this.translation.currentLang();
       this.itemsPerPageLabel = this.translation.t('common.pagination.itemsPerPage');
-      this.nextPageLabel = this.translation.t('common.pagination.nextPageLabel');
+      this.nextPageLabel = this.translation.t('common.pagination.nextPage');
       this.previousPageLabel = this.translation.t('common.pagination.previousPage');
-      this.firstPageLabel = this.translation.t('common.pagination.firstPageLabel');
-      this.lastPageLabel = this.translation.t('common.pagination.lastPageLabel');
+      this.firstPageLabel = this.translation.t('common.pagination.firstPage');
+      this.lastPageLabel = this.translation.t('common.pagination.lastPage');
       this.changes.next();
     });
   }

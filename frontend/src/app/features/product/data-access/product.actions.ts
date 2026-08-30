@@ -19,5 +19,9 @@ export const ProductActions = createActionGroup({
     'Set Active': props<{ id: number; active: boolean }>(),
     'Set Active Success': props<{ product: Product }>(),
     'Set Active Failure': props<{ error: string }>(),
+
+    'Delete Product': props<{ id: number }>(),
+    'Delete Product Success': props<{ id: number }>(),
+    'Delete Product Failure': props<{ error: string }>(),
   },
 });

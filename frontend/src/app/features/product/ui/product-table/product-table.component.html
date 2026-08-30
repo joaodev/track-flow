@@ -19,7 +19,20 @@
 
     <ng-container matColumnDef="unitPrice">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'product.table.columnPrice' | translate }}</th>
-      <td mat-cell *matCellDef="let product">{{ product.unitPrice | number: '1.2-2' }}</td>
+      <td mat-cell *matCellDef="let product">{{ product.unitPrice | localCurrency }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="stock">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'product.table.columnStock' | translate }}</th>
+      <td mat-cell *matCellDef="let product">
+        @if (inventoryByProductId[product.id]; as inv) {
+          <span class="status-pill" [class]="inv.availableQuantity <= inv.lowStockThreshold ? 'status-pill--cancelled' : 'status-pill--delivered'">
+        {{ inv.availableQuantity }}
+      </span>
+        } @else {
+          —
+        }
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="active">
@@ -35,9 +48,17 @@
       <th mat-header-cell *matHeaderCellDef class="col-center"></th>
       <td mat-cell *matCellDef="let product" class="col-center">
         <div class="actions-row">
+          <button mat-icon-button (click)="adjustStock.emit(product)" [matTooltip]="'product.table.adjustStockTooltip' | translate">
+            <mat-icon>inventory_2</mat-icon>
+          </button>
           <button mat-icon-button (click)="editProduct.emit(product)" [matTooltip]="'product.table.editTooltip' | translate">
             <mat-icon>edit</mat-icon>
           </button>
+          @if (isAdmin) {
+            <button mat-icon-button color="warn" (click)="deleteProduct.emit(product)" [matTooltip]="'product.table.deleteTooltip' | translate">
+              <mat-icon>delete</mat-icon>
+            </button>
+          }
           <button
             mat-stroked-button
             [color]="product.active ? 'warn' : 'primary'"

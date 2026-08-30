@@ -10,6 +10,7 @@ import {
   UpdateProductRequest,
 } from '../../data-access/product.model';
 import { TranslatePipe } from '../../../../core/translate.pipe';
+import { CurrencyInputDirective } from '../../../../core/currency/currency-input.directive';
 
 export interface ProductFormDialogData {
   product?: Product;
@@ -25,6 +26,7 @@ export interface ProductFormDialogData {
     MatButtonModule,
     MatDialogModule,
     TranslatePipe,
+    CurrencyInputDirective,
   ],
   templateUrl: './product-form.component.html',
   styleUrl: './product-form.component.scss',
@@ -41,6 +43,7 @@ export class ProductFormComponent {
     name: [this.data.product?.name ?? '', Validators.required],
     description: [this.data.product?.description ?? ''],
     unitPrice: [this.data.product?.unitPrice ?? 0, [Validators.required, Validators.min(0.01)]],
+    initialQuantity: [0, [Validators.min(0)]],
   });
 
   onSubmit(): void {
@@ -63,6 +66,7 @@ export class ProductFormComponent {
         name: value.name,
         description: value.description || undefined,
         unitPrice: value.unitPrice,
+        initialQuantity: value.initialQuantity,
       };
       this.dialogRef.close(request);
     }

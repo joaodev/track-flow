@@ -28,4 +28,8 @@ export class ProductService {
   deactivate(id: number): Observable<Product> {
     return this.http.patch<Product>(`${this.baseUrl}/${id}/deactivate`, {});
   }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
 }

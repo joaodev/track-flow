@@ -124,10 +124,13 @@
       "columnName": "Name",
       "columnPrice": "Price",
       "columnStatus": "Status",
+      "columnStock": "Stock",
+      "adjustStockTooltip": "Adjust stock",
       "searchLabel": "Search",
       "searchPlaceholder": "SKU, name...",
       "editTooltip": "Edit product",
-      "noResults": "No products match your search."
+      "noResults": "No products match your search.",
+      "deleteTooltip": "Delete product"
     },
     "form": {
       "createTitle": "New Product",
@@ -138,10 +141,27 @@
       "nameError": "Name is required",
       "descriptionLabel": "Description",
       "priceLabel": "Unit Price",
+      "initialQuantityLabel": "Initial Quantity",
       "priceError": "Enter a valid price",
       "submitCreate": "Create Product",
       "submitUpdate": "Save Changes"
+    },
+    "deleteConfirm": {
+      "title": "Delete product",
+      "message": "Are you sure you want to delete {{name}}? This cannot be undone."
     }
+  },
+  "inventory": {
+    "form": {
+      "title": "Adjust Stock — {{name}}",
+      "onHand": "On hand",
+      "reserved": "Reserved",
+      "available": "Available",
+      "deltaLabel": "Quantity",
+      "deltaHint": "Positive to restock, negative to correct/write off",
+      "submit": "Adjust"
+    },
+    "lowStockToast": "Low stock on product #{{productId}}: {{available}} units available"
   },
   "user": {
     "management": {
@@ -185,6 +205,11 @@
     "VALIDATION_FAILED": "Please check the information provided",
     "UNKNOWN_ERROR": "Something went wrong. Please try again.",
     "PRODUCT_NOT_FOUND": "Product not found",
-    "SKU_ALREADY_EXISTS": "A product with this SKU already exists"
+    "SKU_ALREADY_EXISTS": "A product with this SKU already exists",
+    "INVENTORY_NOT_FOUND": "Inventory record not found",
+    "INSUFFICIENT_STOCK": "This adjustment would take stock below zero",
+    "STOCK_CONFLICT": "This inventory record was updated by someone else at the same time. Please retry.",
+    "ACCESS_DENIED": "You don't have permission to perform this action",
+    "UNAUTHENTICATED": "Authentication is required to access this resource"
   }
 }

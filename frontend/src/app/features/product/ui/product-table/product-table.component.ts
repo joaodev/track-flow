@@ -19,6 +19,9 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslatePipe } from '../../../../core/translate.pipe';
 import { Product } from '../../data-access/product.model';
+import { Dictionary } from '@ngrx/entity';
+import { Inventory } from '../../../inventory/data-access/inventory.model';
+import { LocalCurrencyPipe } from '../../../../core/currency/local-currency.pipe';
 
 @Component({
   selector: 'app-product-table',
@@ -34,19 +37,24 @@ import { Product } from '../../data-access/product.model';
     MatIcon,
     MatTooltip,
     TranslatePipe,
+    LocalCurrencyPipe,
   ],
   templateUrl: './product-table.component.html',
   styleUrl: './product-table.component.scss',
 })
 export class ProductTableComponent implements OnChanges, AfterViewInit {
   @Input({ required: true }) products: Product[] = [];
+  @Input({ required: true }) inventoryByProductId: Dictionary<Inventory> = {};
   @Output() editProduct = new EventEmitter<Product>();
   @Output() toggleActive = new EventEmitter<{ id: number; active: boolean }>();
+  @Output() adjustStock = new EventEmitter<Product>();
+  @Input({ required: true }) isAdmin = false;
+  @Output() deleteProduct = new EventEmitter<Product>();
 
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  displayedColumns = ['sku', 'name', 'unitPrice', 'active', 'actions'];
+  displayedColumns = ['sku', 'name', 'unitPrice', 'stock', 'active', 'actions'];
   dataSource = new MatTableDataSource<Product>([]);
 
   private viewReady = false;

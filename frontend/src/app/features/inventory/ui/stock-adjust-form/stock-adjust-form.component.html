@@ -1,0 +1,22 @@
+<h2 mat-dialog-title>{{ 'inventory.form.title' | translate: { name: data.product.name } }}</h2>
+
+<div mat-dialog-content class="current-stock">
+  <span>{{ 'inventory.form.onHand' | translate }}: <strong>{{ data.inventory.quantityOnHand }}</strong></span>
+  <span>{{ 'inventory.form.reserved' | translate }}: <strong>{{ data.inventory.quantityReserved }}</strong></span>
+  <span>{{ 'inventory.form.available' | translate }}: <strong>{{ data.inventory.availableQuantity }}</strong></span>
+</div>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div mat-dialog-content>
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'inventory.form.deltaLabel' | translate }}</mat-label>
+      <input matInput type="number" formControlName="quantityDelta" />
+      <mat-hint>{{ 'inventory.form.deltaHint' | translate }}</mat-hint>
+    </mat-form-field>
+  </div>
+
+  <div mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="onCancel()">{{ 'common.cancel' | translate }}</button>
+    <button mat-raised-button color="primary" type="submit">{{ 'inventory.form.submit' | translate }}</button>
+  </div>
+</form>

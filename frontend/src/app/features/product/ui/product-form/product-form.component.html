@@ -25,11 +25,18 @@
 
     <mat-form-field appearance="outline">
       <mat-label>{{ 'product.form.priceLabel' | translate }}</mat-label>
-      <input matInput type="number" step="0.01" formControlName="unitPrice" />
+      <input matInput type="text" inputmode="numeric" formControlName="unitPrice" appCurrencyInput />
       @if (form.controls.unitPrice.invalid && form.controls.unitPrice.touched) {
         <mat-error>{{ 'product.form.priceError' | translate }}</mat-error>
       }
     </mat-form-field>
+
+    @if (!isEditMode) {
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'product.form.initialQuantityLabel' | translate }}</mat-label>
+        <input matInput type="number" formControlName="initialQuantity" />
+      </mat-form-field>
+    }
   </div>
 
   <div mat-dialog-actions align="end">

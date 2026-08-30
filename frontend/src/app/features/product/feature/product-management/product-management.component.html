@@ -8,9 +8,15 @@
     <p>{{ ('errors.' + error) | translate }}</p>
   }
 
-  <app-product-table
-    [products]="(products$ | async) ?? []"
-    (editProduct)="onEditProduct($event)"
-    (toggleActive)="onToggleActive($event)"
-  />
+  @if (inventoryByProductId$ | async; as inventoryByProductId) {
+    <app-product-table
+      [products]="(products$ | async) ?? []"
+      [inventoryByProductId]="inventoryByProductId"
+      [isAdmin]="(isAdmin$ | async) ?? false"
+      (editProduct)="onEditProduct($event)"
+      (toggleActive)="onToggleActive($event)"
+      (adjustStock)="onAdjustStock($event, inventoryByProductId)"
+      (deleteProduct)="onDeleteProduct($event)"
+    />
+  }
 </div>

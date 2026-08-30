@@ -17,6 +17,8 @@ import { MatPaginatorIntl } from '@angular/material/paginator';
 import { AppPaginatorIntl } from './core/app-paginator-intl.service';
 import { productFeature } from './features/product/data-access/product.reducer';
 import { ProductEffects } from './features/product/data-access/product.effects';
+import { inventoryFeature } from './features/inventory/data-access/inventory.reducer';
+import { InventoryEffects } from './features/inventory/data-access/inventory.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -32,7 +34,8 @@ export const appConfig: ApplicationConfig = {
     provideState(authFeature),
     provideState(userFeature),
     provideState(productFeature),
-    provideEffects(ShipmentEffects, AuthEffects, UserEffects, ProductEffects),
+    provideState(inventoryFeature),
+    provideEffects(ShipmentEffects, AuthEffects, UserEffects, ProductEffects, InventoryEffects),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
     { provide: MatPaginatorIntl, useClass: AppPaginatorIntl },
   ],

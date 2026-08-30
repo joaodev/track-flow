@@ -43,10 +43,19 @@ export const productFeature = createFeature({
         productAdapter.upsertOne(product, { ...state, loading: false }),
     ),
 
+    on(ProductActions.deleteProduct, (state): ProductState => ({
+      ...state, loading: true
+    })),
+
+    on(ProductActions.deleteProductSuccess, (state, { id }): ProductState =>
+      productAdapter.removeOne(id, { ...state, loading: false }),
+    ),
+
     on(
       ProductActions.loadProductsFailure,
       ProductActions.createProductFailure,
       ProductActions.updateProductFailure,
+      ProductActions.deleteProductFailure,
       ProductActions.setActiveFailure,
       (state, { error }): ProductState => ({
         ...state,
