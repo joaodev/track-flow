@@ -1,0 +1,61 @@
+<div class="table-toolbar">
+  <mat-form-field appearance="outline" class="filter-field">
+    <mat-label>{{ 'product.table.searchLabel' | translate }}</mat-label>
+    <input matInput (input)="applyFilter($any($event.target).value)" [placeholder]="'product.table.searchPlaceholder' | translate" />
+  </mat-form-field>
+</div>
+
+<div class="table-scroll">
+  <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z1">
+    <ng-container matColumnDef="sku">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'product.table.columnSku' | translate }}</th>
+      <td mat-cell *matCellDef="let product" class="mono">{{ product.sku }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'product.table.columnName' | translate }}</th>
+      <td mat-cell *matCellDef="let product">{{ product.name }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="unitPrice">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'product.table.columnPrice' | translate }}</th>
+      <td mat-cell *matCellDef="let product">{{ product.unitPrice | number: '1.2-2' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="active">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'product.table.columnStatus' | translate }}</th>
+      <td mat-cell *matCellDef="let product">
+        <span class="status-pill" [class]="product.active ? 'status-pill--delivered' : 'status-pill--cancelled'">
+          {{ (product.active ? 'common.active' : 'common.deactivated') | translate }}
+        </span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef class="col-center"></th>
+      <td mat-cell *matCellDef="let product" class="col-center">
+        <div class="actions-row">
+          <button mat-icon-button (click)="editProduct.emit(product)" [matTooltip]="'product.table.editTooltip' | translate">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button
+            mat-stroked-button
+            [color]="product.active ? 'warn' : 'primary'"
+            (click)="toggleActive.emit({ id: product.id, active: !product.active })"
+          >
+            {{ (product.active ? 'common.deactivate' : 'common.activate') | translate }}
+          </button>
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell no-data" [attr.colspan]="displayedColumns.length">{{ 'product.table.noResults' | translate }}</td>
+    </tr>
+  </table>
+</div>
+
+<mat-paginator [pageSizeOptions]="[5, 10, 25]" [pageSize]="10" showFirstLastButtons=""></mat-paginator>

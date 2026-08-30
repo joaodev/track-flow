@@ -17,6 +17,10 @@
           <mat-icon>search</mat-icon>
           <span>{{ 'appShell.navTrack' | translate }}</span>
         </a>
+        <a routerLink="/products" routerLinkActive="active" (click)="isMobile() && drawer.close()">
+          <mat-icon>inventory</mat-icon>
+          <span>{{ 'appShell.navProducts' | translate }}</span>
+        </a>
         <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="isMobile() && drawer.close()">
           <mat-icon>inventory_2</mat-icon>
           <span>{{ 'appShell.navShipments' | translate }}</span>

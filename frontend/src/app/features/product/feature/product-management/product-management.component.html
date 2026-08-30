@@ -1,0 +1,16 @@
+<div class="product-management-page">
+  <header>
+    <h1>{{ 'product.management.title' | translate }}</h1>
+    <button mat-raised-button color="primary" (click)="onOpenCreateForm()">{{ 'product.management.newProduct' | translate }}</button>
+  </header>
+
+  @if (error$ | async; as error) {
+    <p>{{ ('errors.' + error) | translate }}</p>
+  }
+
+  <app-product-table
+    [products]="(products$ | async) ?? []"
+    (editProduct)="onEditProduct($event)"
+    (toggleActive)="onToggleActive($event)"
+  />
+</div>

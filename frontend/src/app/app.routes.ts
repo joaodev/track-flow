@@ -6,6 +6,7 @@ import { UserManagementComponent } from './features/user/feature/user-management
 import { authGuard } from './features/auth/data-access/auth.guard';
 import { adminGuard } from './features/user/data-access/admin.guard';
 import { AppShellComponent } from './core/app-shell/app-shell.component';
+import { ProductManagementComponent } from './features/product/feature/product-management/product-management.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -16,6 +17,7 @@ export const routes: Routes = [
     children: [
       { path: '', component: ShipmentListComponent },
       { path: 'track', component: TrackShipmentComponent },
+      { path: 'products', component: ProductManagementComponent },
       { path: 'admin/users', component: UserManagementComponent, canActivate: [adminGuard] },
     ],
   },

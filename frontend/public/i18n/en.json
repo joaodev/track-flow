@@ -25,6 +25,7 @@
     "navTrack": "Track",
     "navShipments": "Shipments",
     "navUsers": "Users",
+    "navProducts": "Products",
     "logout": "Log Out"
   },
   "auth": {
@@ -113,6 +114,35 @@
       "message": "Are you sure you want to delete shipment {{code}}? This cannot be undone."
     }
   },
+  "product": {
+    "management": {
+      "title": "Products",
+      "newProduct": "New Product"
+    },
+    "table": {
+      "columnSku": "SKU",
+      "columnName": "Name",
+      "columnPrice": "Price",
+      "columnStatus": "Status",
+      "searchLabel": "Search",
+      "searchPlaceholder": "SKU, name...",
+      "editTooltip": "Edit product",
+      "noResults": "No products match your search."
+    },
+    "form": {
+      "createTitle": "New Product",
+      "editTitle": "Edit Product",
+      "skuLabel": "SKU",
+      "skuError": "SKU is required",
+      "nameLabel": "Name",
+      "nameError": "Name is required",
+      "descriptionLabel": "Description",
+      "priceLabel": "Unit Price",
+      "priceError": "Enter a valid price",
+      "submitCreate": "Create Product",
+      "submitUpdate": "Save Changes"
+    }
+  },
   "user": {
     "management": {
       "title": "User Management",
@@ -153,6 +183,8 @@
     "EMAIL_ALREADY_REGISTERED": "This email is already registered",
     "SHIPMENT_NOT_FOUND": "No shipment found with that code",
     "VALIDATION_FAILED": "Please check the information provided",
-    "UNKNOWN_ERROR": "Something went wrong. Please try again."
+    "UNKNOWN_ERROR": "Something went wrong. Please try again.",
+    "PRODUCT_NOT_FOUND": "Product not found",
+    "SKU_ALREADY_EXISTS": "A product with this SKU already exists"
   }
 }

@@ -25,6 +25,7 @@
     "navTrack": "Rastrear",
     "navShipments": "Envios",
     "navUsers": "Usuários",
+    "navProducts": "Produtos",
     "logout": "Sair"
   },
   "auth": {
@@ -113,6 +114,35 @@
       "message": "Tem certeza que deseja excluir o envio {{code}}? Esta ação não pode ser desfeita."
     }
   },
+  "product": {
+    "management": {
+      "title": "Produtos",
+      "newProduct": "Novo Produto"
+    },
+    "table": {
+      "columnSku": "SKU",
+      "columnName": "Nome",
+      "columnPrice": "Preço",
+      "columnStatus": "Status",
+      "searchLabel": "Buscar",
+      "searchPlaceholder": "SKU, nome...",
+      "editTooltip": "Editar produto",
+      "noResults": "Nenhum produto encontrado para sua busca."
+    },
+    "form": {
+      "createTitle": "Novo Produto",
+      "editTitle": "Editar Produto",
+      "skuLabel": "SKU",
+      "skuError": "SKU é obrigatório",
+      "nameLabel": "Nome",
+      "nameError": "Nome é obrigatório",
+      "descriptionLabel": "Descrição",
+      "priceLabel": "Preço Unitário",
+      "priceError": "Informe um preço válido",
+      "submitCreate": "Criar Produto",
+      "submitUpdate": "Salvar Alterações"
+    }
+  },
   "user": {
     "management": {
       "title": "Gerenciamento de Usuários",
@@ -153,6 +183,8 @@
     "EMAIL_ALREADY_REGISTERED": "Este e-mail já está cadastrado",
     "SHIPMENT_NOT_FOUND": "Nenhum envio encontrado com esse código",
     "VALIDATION_FAILED": "Verifique os dados informados",
-    "UNKNOWN_ERROR": "Ocorreu um erro inesperado. Tente novamente."
+    "UNKNOWN_ERROR": "Ocorreu um erro inesperado. Tente novamente.",
+    "PRODUCT_NOT_FOUND": "Produto não encontrado",
+    "SKU_ALREADY_EXISTS": "Já existe um produto com esse SKU"
   }
 }

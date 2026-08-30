@@ -1,0 +1,38 @@
+.table-scroll {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 640px;
+}
+
+.table-toolbar {
+  margin-bottom: 16px;
+}
+
+.filter-field {
+  width: 320px;
+}
+
+.no-data {
+  padding: 24px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+mat-paginator {
+  margin-top: 8px;
+  background: transparent;
+}
+
+.col-center {
+  text-align: center;
+}
+
+.actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
