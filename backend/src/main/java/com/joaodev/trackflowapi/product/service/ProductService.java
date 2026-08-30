@@ -3,8 +3,10 @@ package com.joaodev.trackflowapi.product.service;
 import com.joaodev.trackflowapi.product.domain.Product;
 import com.joaodev.trackflowapi.product.dto.CreateProductRequest;
 import com.joaodev.trackflowapi.product.dto.UpdateProductRequest;
+import com.joaodev.trackflowapi.product.event.ProductCreatedEvent;
 import com.joaodev.trackflowapi.product.repository.ProductRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -14,9 +16,11 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, ApplicationEventPublisher eventPublisher) {
         this.productRepository = productRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
@@ -37,7 +41,11 @@ public class ProductService {
                 .updatedAt(now)
                 .build();
 
-        return productRepository.save(product);
+        Product saved = productRepository.save(product);
+
+        eventPublisher.publishEvent(new ProductCreatedEvent(saved.getId(), saved.getSku(), now));
+
+        return saved;
     }
 
     @Transactional
