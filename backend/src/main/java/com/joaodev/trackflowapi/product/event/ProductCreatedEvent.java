@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public record ProductCreatedEvent(
         Long productId,
         String sku,
+        int initialQuantity,
         LocalDateTime occurredAt
 ) {
 }

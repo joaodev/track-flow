@@ -27,16 +27,18 @@ public class InventoryService {
     }
 
     @Transactional
-    public Inventory createForProduct(Long productId) {
+    public Inventory createForProduct(Long productId, int initialQuantity) {
         Inventory inventory = Inventory.builder()
                 .productId(productId)
-                .quantityOnHand(0)
+                .quantityOnHand(initialQuantity)
                 .quantityReserved(0)
                 .lowStockThreshold(DEFAULT_LOW_STOCK_THRESHOLD)
                 .updatedAt(LocalDateTime.now())
                 .build();
 
-        return inventoryRepository.save(inventory);
+        Inventory saved = inventoryRepository.save(inventory);
+        publishLowStockIfNeeded(saved);
+        return saved;
     }
 
     @Transactional

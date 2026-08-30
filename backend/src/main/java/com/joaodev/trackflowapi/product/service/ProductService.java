@@ -43,7 +43,8 @@ public class ProductService {
 
         Product saved = productRepository.save(product);
 
-        eventPublisher.publishEvent(new ProductCreatedEvent(saved.getId(), saved.getSku(), now));
+        int initialQuantity =  request.initialQuantity() != null ? request.initialQuantity() : 0;
+        eventPublisher.publishEvent(new ProductCreatedEvent(saved.getId(), saved.getSku(), initialQuantity, now));
 
         return saved;
     }
@@ -72,6 +73,14 @@ public class ProductService {
     }
 
     public List<Product> findAll() {
-        return productRepository.findAllByOrderByCreatedAtDesc();
+        return productRepository.findByDeletedFalseOrderByCreatedAtDesc();
+    }
+
+    @Transactional
+    public void deleteProduct(Long id) {
+        Product product = findById(id);
+        product.setUpdatedAt(LocalDateTime.now());
+        product.setDeleted(true);
+        productRepository.save(product);
     }
 }
