@@ -55,6 +55,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/shipments/*").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/products/*").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/orders/*").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/customers/*").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/carriers/*").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth -> oauth.jwt(
                         jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter)));

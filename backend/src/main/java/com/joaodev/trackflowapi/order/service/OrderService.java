@@ -1,5 +1,9 @@
 package com.joaodev.trackflowapi.order.service;
 
+import com.joaodev.trackflowapi.carrier.domain.Carrier;
+import com.joaodev.trackflowapi.carrier.service.CarrierService;
+import com.joaodev.trackflowapi.customer.domain.Customer;
+import com.joaodev.trackflowapi.customer.service.CustomerService;
 import com.joaodev.trackflowapi.inventory.service.InventoryService;
 import com.joaodev.trackflowapi.order.domain.Order;
 import com.joaodev.trackflowapi.order.domain.OrderItem;
@@ -31,26 +35,36 @@ public class OrderService {
     private final ProductService productService;
     private final InventoryService inventoryService;
     private final ShipmentService shipmentService;
+    private final CustomerService customerService;
+    private final CarrierService carrierService;
     private final ApplicationEventPublisher eventPublisher;
 
     public OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository,
                         ProductService productService, InventoryService inventoryService,
-                        ShipmentService shipmentService, ApplicationEventPublisher eventPublisher) {
+                        ShipmentService shipmentService, CustomerService customerService,
+                        CarrierService carrierService, ApplicationEventPublisher eventPublisher) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.productService = productService;
         this.inventoryService = inventoryService;
         this.shipmentService = shipmentService;
+        this.customerService = customerService;
+        this.carrierService = carrierService;
         this.eventPublisher = eventPublisher;
     }
 
     @Transactional
     public Order createOrder(CreateOrderRequest request) {
+        Customer customer = customerService.findById(request.customerId());
+        if (!customer.isActive() || customer.isDeleted()) {
+            throw new CustomerNotOrderableException(customer.getId());
+        }
+
         LocalDateTime now = LocalDateTime.now();
 
         Order order = Order.builder()
                 .orderNumber(generateOrderNumber())
-                .customerName(request.customerName())
+                .customerId(request.customerId())
                 .origin(request.origin())
                 .destination(request.destination())
                 .status("PENDING")
@@ -97,12 +111,17 @@ public class OrderService {
         Order order = findById(id);
         requireStatus(order, "CONFIRMED");
 
+        Carrier carrier = carrierService.findById(request.carrierId());
+        if (!carrier.isActive() || carrier.isDeleted()) {
+            throw new CarrierNotOrderableException(carrier.getId());
+        }
+
         for (OrderItem item : getItems(order.getId())) {
             inventoryService.fullFill(item.getProductId(), item.getQuantity());
         }
 
         Shipment shipment = shipmentService.createShipment(
-                new CreateShipmentRequest(order.getOrigin(), order.getDestination(), request.carrier()));
+                new CreateShipmentRequest(order.getOrigin(), order.getDestination(), carrier.getName()));
 
         order.setShipmentId(shipment.getId());
         return transitionTo(order, "SHIPPED");

@@ -1,10 +1,12 @@
 package com.joaodev.trackflowapi.shipment.controller;
 
 import com.joaodev.trackflowapi.auth.dto.AuthResponse;
+import com.joaodev.trackflowapi.auth.dto.CreateUserRequest;
 import com.joaodev.trackflowapi.auth.dto.LoginRequest;
 import com.joaodev.trackflowapi.shipment.domain.Shipment;
 import com.joaodev.trackflowapi.shipment.dto.CreateShipmentRequest;
 import com.joaodev.trackflowapi.shipment.dto.UpdateShipmentStatusRequest;
+import com.joaodev.trackflowapi.shipment.service.ShipmentService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.TestRestTemplate;
@@ -18,6 +20,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 
 import java.util.Map;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,37 +42,21 @@ public class ShipmentControllerIT {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    @Test
-    void createShipmentViaRestEndpoint() {
-        String token = adminToken();
+    @Autowired
+    private ShipmentService shipmentService;
 
-        CreateShipmentRequest request = new CreateShipmentRequest(
-                "São Paulo", "Salvador", "Correios");
-
-        ResponseEntity<Shipment> response = restTemplate.exchange(
-                "/api/shipments", HttpMethod.POST, withAuth(request, token), Shipment.class);
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(response.getHeaders().getLocation()).isNotNull();
-        assert response.getBody() != null;
-        assertThat(response.getBody().getStatus()).isEqualTo("CREATED");
+    private Shipment createShipment(String origin, String destination, String carrier) {
+        return shipmentService.createShipment(new CreateShipmentRequest(origin, destination, carrier));
     }
 
     @Test
     void updateShipmentStatusViaRestEndpoint() {
         String token = adminToken();
-
-        CreateShipmentRequest createRequest = new CreateShipmentRequest(
-                "Recife", "Fortaleza", "JALog");
-
-        ResponseEntity<Shipment> createResponse = restTemplate.exchange(
-                "/api/shipments", HttpMethod.POST, withAuth(createRequest, token), Shipment.class);
-        Shipment created = createResponse.getBody();
+        Shipment created = createShipment("Recife", "Fortaleza", "JALog");
 
         UpdateShipmentStatusRequest updateRequest = new UpdateShipmentStatusRequest(
                 "IN_TRANSIT", "Recife Hub", "Departed origin facility");
 
-        assert created != null;
         ResponseEntity<Shipment> response = restTemplate.exchange(
                 "/api/shipments/" + created.getTrackingCode() + "/status",
                 HttpMethod.PUT,
@@ -89,17 +76,6 @@ public class ShipmentControllerIT {
     }
 
     @Test
-    void creatingShipmentWithInvalidDataReturnsBadRequest() {
-        String token = adminToken();
-
-        CreateShipmentRequest invalid = new CreateShipmentRequest("", "", "");
-        ResponseEntity<?> response = restTemplate.exchange(
-                "/api/shipments", HttpMethod.POST, withAuth(invalid, token), Map.class);
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    }
-
-    @Test
     void listingShipmentsRequiresAuthentication() {
         ResponseEntity<?> response = restTemplate.getForEntity("/api/shipments", Map.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
@@ -108,10 +84,7 @@ public class ShipmentControllerIT {
     @Test
     void authenticatedUserCanListShipments() {
         String token = adminToken();
-
-        restTemplate.exchange("/api/shipments", HttpMethod.POST,
-                withAuth(new CreateShipmentRequest(
-                        "Curitiba", "Joinville", "Correios"), token), Shipment.class);
+        createShipment("Curitiba", "Joinville", "Correios");
 
         ResponseEntity<Shipment[]> response = restTemplate.exchange(
                 "/api/shipments", HttpMethod.GET, withAuth(null, token), Shipment[].class);
@@ -123,42 +96,31 @@ public class ShipmentControllerIT {
     @Test
     void adminCanDeleteShipment() {
         String token = adminToken();
-
-        ResponseEntity<Shipment> createResponse = restTemplate.exchange(
-                "/api/shipments", HttpMethod.POST,
-                withAuth(new CreateShipmentRequest("Vitória", "Cariacica", "Correios"), token), Shipment.class);
-
-        assert createResponse.getBody() != null;
-        String trackingCode = createResponse.getBody().getTrackingCode();
+        Shipment created = createShipment("Vitória", "Cariacica", "Correios");
 
         ResponseEntity<Void> deleteResponse = restTemplate.exchange(
-                "/api/shipments/" + trackingCode, HttpMethod.DELETE, withAuth(null, token), Void.class);
+                "/api/shipments/" + created.getTrackingCode(), HttpMethod.DELETE, withAuth(null, token), Void.class);
 
         assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
-        ResponseEntity<?> getResponse = restTemplate.getForEntity("/api/shipments/" + trackingCode, Map.class);
+        ResponseEntity<?> getResponse = restTemplate.getForEntity(
+                "/api/shipments/" + created.getTrackingCode(), Map.class);
         assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
     @Test
     void deletedShipmentDoesNotAppearInList() {
         String token = adminToken();
+        Shipment created = createShipment("Natal", "João Pessoa", "Jadlog");
 
-        ResponseEntity<Shipment> createResponse = restTemplate.exchange(
-                "/api/shipments", HttpMethod.POST,
-                withAuth(new CreateShipmentRequest("Natal", "João Pessoa", "Jadlog"), token), Shipment.class);
-
-        assert createResponse.getBody() != null;
-        String trackingCode = createResponse.getBody().getTrackingCode();
-
-        restTemplate.exchange("/api/shipments/" + trackingCode, HttpMethod.DELETE, withAuth(null, token), Void.class);
+        restTemplate.exchange("/api/shipments/" + created.getTrackingCode(), HttpMethod.DELETE, withAuth(null, token), Void.class);
 
         ResponseEntity<Shipment[]> listResponse = restTemplate.exchange(
                 "/api/shipments", HttpMethod.GET, withAuth(null, token), Shipment[].class);
 
         assertThat(listResponse.getBody())
                 .extracting(Shipment::getTrackingCode)
-                .doesNotContain(trackingCode);
+                .doesNotContain(created.getTrackingCode());
     }
 
     @Test
@@ -174,25 +136,19 @@ public class ShipmentControllerIT {
     @Test
     void nonAdminCannotDeleteShipment() {
         String adminToken = adminToken();
-        String opsEmail = "ops-" + java.util.UUID.randomUUID() + "@trackflow.dev";
+        String opsEmail = "ops-" + UUID.randomUUID() + "@trackflow.dev";
 
         restTemplate.exchange("/api/users", HttpMethod.POST,
-                withAuth(new com.joaodev.trackflowapi.auth.dto.CreateUserRequest(
-                        opsEmail, "password123", "OPS"), adminToken), Object.class);
+                withAuth(new CreateUserRequest(opsEmail, "password123", "OPS"), adminToken), Object.class);
 
         AuthResponse opsLogin = restTemplate.postForObject(
                 "/api/auth/login", new LoginRequest(opsEmail, "password123"), AuthResponse.class);
         assert opsLogin != null;
 
-        ResponseEntity<Shipment> createResponse = restTemplate.exchange(
-                "/api/shipments", HttpMethod.POST,
-                withAuth(new CreateShipmentRequest("Manaus", "Belém", "Correios"), adminToken), Shipment.class);
-
-        assert createResponse.getBody() != null;
-        String trackingCode = createResponse.getBody().getTrackingCode();
+        Shipment created = createShipment("Manaus", "Belém", "Correios");
 
         ResponseEntity<?> response = restTemplate.exchange(
-                "/api/shipments/" + trackingCode, HttpMethod.DELETE, withAuth(null, opsLogin.token()), Map.class);
+                "/api/shipments/" + created.getTrackingCode(), HttpMethod.DELETE, withAuth(null, opsLogin.token()), Map.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     }

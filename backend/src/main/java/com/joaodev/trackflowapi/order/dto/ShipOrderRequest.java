@@ -1,8 +1,8 @@
 package com.joaodev.trackflowapi.order.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record ShipOrderRequest(
-        @NotBlank String carrier
+        @NotNull Long carrierId
 ) {
 }

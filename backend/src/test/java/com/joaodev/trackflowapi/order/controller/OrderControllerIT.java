@@ -3,6 +3,10 @@ package com.joaodev.trackflowapi.order.controller;
 import com.joaodev.trackflowapi.auth.dto.AuthResponse;
 import com.joaodev.trackflowapi.auth.dto.CreateUserRequest;
 import com.joaodev.trackflowapi.auth.dto.LoginRequest;
+import com.joaodev.trackflowapi.carrier.domain.Carrier;
+import com.joaodev.trackflowapi.carrier.dto.CarrierRequest;
+import com.joaodev.trackflowapi.customer.domain.Customer;
+import com.joaodev.trackflowapi.customer.dto.CustomerRequest;
 import com.joaodev.trackflowapi.inventory.repository.InventoryRepository;
 import com.joaodev.trackflowapi.order.domain.Order;
 import com.joaodev.trackflowapi.order.domain.OrderItem;
@@ -63,8 +67,6 @@ public class OrderControllerIT {
         }
     }
 
-    /** Creates a product and waits for its (@Async) Inventory row before
-     * returning — every order test needs stock to actually exist. */
     private Product createProductWithStock(String token, int initialQuantity) {
         ResponseEntity<Product> response = restTemplate.exchange(
                 "/api/products", HttpMethod.POST,
@@ -85,15 +87,32 @@ public class OrderControllerIT {
         throw new AssertionError("Inventory was not created for product " + product.getId() + " within 5s");
     }
 
-    private CreateOrderRequest orderRequestFor(Product product, int quantity) {
+    private Customer createCustomer(String token) {
+        ResponseEntity<Customer> response = restTemplate.exchange(
+                "/api/customers", HttpMethod.POST,
+                withAuth(new CustomerRequest("John Smith", "john-" + UUID.randomUUID() + "@example.com",
+                        "555-0100", "456 Oak Ave"), token),
+                Customer.class);
+        assert response.getBody() != null;
+        return response.getBody();
+    }
+
+    private Carrier createCarrier(String token) {
+        ResponseEntity<Carrier> response = restTemplate.exchange(
+                "/api/carriers", HttpMethod.POST, withAuth(new CarrierRequest("Correios", null), token), Carrier.class);
+        assert response.getBody() != null;
+        return response.getBody();
+    }
+
+    private CreateOrderRequest orderRequestFor(Customer customer, Product product, int quantity) {
         return new CreateOrderRequest(
-                "John Smith", "Warehouse B", "456 Oak Ave",
+                customer.getId(), "Warehouse B", "456 Oak Ave",
                 List.of(new OrderItemRequest(product.getId(), quantity)));
     }
 
-    private Order createOrder(String token, Product product, int quantity) {
+    private Order createOrder(String token, Customer customer, Product product, int quantity) {
         ResponseEntity<Order> response = restTemplate.exchange(
-                "/api/orders", HttpMethod.POST, withAuth(orderRequestFor(product, quantity), token), Order.class);
+                "/api/orders", HttpMethod.POST, withAuth(orderRequestFor(customer, product, quantity), token), Order.class);
         assert response.getBody() != null;
         return response.getBody();
     }
@@ -101,22 +120,25 @@ public class OrderControllerIT {
     @Test
     void createOrderViaRestEndpoint() {
         String token = adminToken();
+        Customer customer = createCustomer(token);
         Product product = createProductWithStock(token, 30);
 
         ResponseEntity<Order> response = restTemplate.exchange(
-                "/api/orders", HttpMethod.POST, withAuth(orderRequestFor(product, 4), token), Order.class);
+                "/api/orders", HttpMethod.POST, withAuth(orderRequestFor(customer, product, 4), token), Order.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assert response.getBody() != null;
         assertThat(response.getBody().getStatus()).isEqualTo("PENDING");
+        assertThat(response.getBody().getCustomerId()).isEqualTo(customer.getId());
         assertThat(response.getBody().getOrderNumber()).startsWith("ORD");
     }
 
     @Test
     void creatingOrderWithNoItemsReturnsValidationError() {
         String token = adminToken();
+        Customer customer = createCustomer(token);
 
-        CreateOrderRequest invalid = new CreateOrderRequest("Jane", "A", "B", List.of());
+        CreateOrderRequest invalid = new CreateOrderRequest(customer.getId(), "A", "B", List.of());
         ResponseEntity<Map> response = restTemplate.exchange(
                 "/api/orders", HttpMethod.POST, withAuth(invalid, token), Map.class);
 
@@ -126,15 +148,33 @@ public class OrderControllerIT {
     }
 
     @Test
+    void creatingOrderForInactiveCustomerReturnsConflictWithErrorCode() {
+        String token = adminToken();
+        Customer customer = createCustomer(token);
+        Product product = createProductWithStock(token, 10);
+
+        restTemplate.exchange("/api/customers/" + customer.getId() + "/deactivate",
+                HttpMethod.PATCH, withAuth(null, token), Customer.class);
+
+        ResponseEntity<Map> response = restTemplate.exchange(
+                "/api/orders", HttpMethod.POST, withAuth(orderRequestFor(customer, product, 1), token), Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        assert response.getBody() != null;
+        assertThat(response.getBody().get("errorCode")).isEqualTo("CUSTOMER_NOT_ORDERABLE");
+    }
+
+    @Test
     void creatingOrderForInactiveProductReturnsConflictWithErrorCode() {
         String token = adminToken();
+        Customer customer = createCustomer(token);
         Product product = createProductWithStock(token, 10);
 
         restTemplate.exchange("/api/products/" + product.getId() + "/deactivate",
                 HttpMethod.PATCH, withAuth(null, token), Product.class);
 
         ResponseEntity<Map> response = restTemplate.exchange(
-                "/api/orders", HttpMethod.POST, withAuth(orderRequestFor(product, 1), token), Map.class);
+                "/api/orders", HttpMethod.POST, withAuth(orderRequestFor(customer, product, 1), token), Map.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
         assert response.getBody() != null;
@@ -144,8 +184,9 @@ public class OrderControllerIT {
     @Test
     void getOrderItemsViaRestEndpoint() {
         String token = adminToken();
+        Customer customer = createCustomer(token);
         Product product = createProductWithStock(token, 15);
-        Order order = createOrder(token, product, 3);
+        Order order = createOrder(token, customer, product, 3);
 
         ResponseEntity<OrderItem[]> response = restTemplate.exchange(
                 "/api/orders/" + order.getId() + "/items", HttpMethod.GET, withAuth(null, token), OrderItem[].class);
@@ -159,8 +200,9 @@ public class OrderControllerIT {
     @Test
     void confirmOrderViaRestEndpoint() {
         String token = adminToken();
+        Customer customer = createCustomer(token);
         Product product = createProductWithStock(token, 20);
-        Order order = createOrder(token, product, 5);
+        Order order = createOrder(token, customer, product, 5);
 
         ResponseEntity<Order> response = restTemplate.exchange(
                 "/api/orders/" + order.getId() + "/confirm", HttpMethod.PATCH, withAuth(null, token), Order.class);
@@ -173,8 +215,9 @@ public class OrderControllerIT {
     @Test
     void confirmingAlreadyConfirmedOrderReturnsConflictWithErrorCode() {
         String token = adminToken();
+        Customer customer = createCustomer(token);
         Product product = createProductWithStock(token, 20);
-        Order order = createOrder(token, product, 2);
+        Order order = createOrder(token, customer, product, 2);
 
         restTemplate.exchange("/api/orders/" + order.getId() + "/confirm", HttpMethod.PATCH, withAuth(null, token), Order.class);
 
@@ -189,8 +232,9 @@ public class OrderControllerIT {
     @Test
     void confirmingOrderWithInsufficientStockReturnsConflictWithErrorCode() {
         String token = adminToken();
+        Customer customer = createCustomer(token);
         Product product = createProductWithStock(token, 2);
-        Order order = createOrder(token, product, 10);
+        Order order = createOrder(token, customer, product, 10);
 
         ResponseEntity<Map> response = restTemplate.exchange(
                 "/api/orders/" + order.getId() + "/confirm", HttpMethod.PATCH, withAuth(null, token), Map.class);
@@ -203,13 +247,15 @@ public class OrderControllerIT {
     @Test
     void shipOrderViaRestEndpoint() {
         String token = adminToken();
+        Customer customer = createCustomer(token);
         Product product = createProductWithStock(token, 20);
-        Order order = createOrder(token, product, 5);
+        Carrier carrier = createCarrier(token);
+        Order order = createOrder(token, customer, product, 5);
         restTemplate.exchange("/api/orders/" + order.getId() + "/confirm", HttpMethod.PATCH, withAuth(null, token), Order.class);
 
         ResponseEntity<Order> response = restTemplate.exchange(
                 "/api/orders/" + order.getId() + "/ship", HttpMethod.PATCH,
-                withAuth(new ShipOrderRequest("Correios"), token), Order.class);
+                withAuth(new ShipOrderRequest(carrier.getId()), token), Order.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assert response.getBody() != null;
@@ -218,10 +264,31 @@ public class OrderControllerIT {
     }
 
     @Test
+    void shippingWithInactiveCarrierReturnsConflictWithErrorCode() {
+        String token = adminToken();
+        Customer customer = createCustomer(token);
+        Product product = createProductWithStock(token, 20);
+        Carrier carrier = createCarrier(token);
+        restTemplate.exchange("/api/carriers/" + carrier.getId() + "/deactivate",
+                HttpMethod.PATCH, withAuth(null, token), Carrier.class);
+        Order order = createOrder(token, customer, product, 2);
+        restTemplate.exchange("/api/orders/" + order.getId() + "/confirm", HttpMethod.PATCH, withAuth(null, token), Order.class);
+
+        ResponseEntity<Map> response = restTemplate.exchange(
+                "/api/orders/" + order.getId() + "/ship", HttpMethod.PATCH,
+                withAuth(new ShipOrderRequest(carrier.getId()), token), Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        assert response.getBody() != null;
+        assertThat(response.getBody().get("errorCode")).isEqualTo("CARRIER_NOT_ORDERABLE");
+    }
+
+    @Test
     void cancelOrderViaRestEndpoint() {
         String token = adminToken();
+        Customer customer = createCustomer(token);
         Product product = createProductWithStock(token, 20);
-        Order order = createOrder(token, product, 3);
+        Order order = createOrder(token, customer, product, 3);
 
         ResponseEntity<Order> response = restTemplate.exchange(
                 "/api/orders/" + order.getId() + "/cancel", HttpMethod.PATCH, withAuth(null, token), Order.class);
@@ -255,8 +322,9 @@ public class OrderControllerIT {
     @Test
     void adminCanDeleteOrderAndItDisappearsFromList() {
         String token = adminToken();
+        Customer customer = createCustomer(token);
         Product product = createProductWithStock(token, 10);
-        Order order = createOrder(token, product, 1);
+        Order order = createOrder(token, customer, product, 1);
 
         ResponseEntity<Void> deleteResponse = restTemplate.exchange(
                 "/api/orders/" + order.getId(), HttpMethod.DELETE, withAuth(null, token), Void.class);
@@ -281,8 +349,9 @@ public class OrderControllerIT {
                 "/api/auth/login", new LoginRequest(opsEmail, "password123"), AuthResponse.class);
         assert opsLogin != null;
 
+        Customer customer = createCustomer(adminToken);
         Product product = createProductWithStock(adminToken, 10);
-        Order order = createOrder(adminToken, product, 1);
+        Order order = createOrder(adminToken, customer, product, 1);
 
         ResponseEntity<Map> response = restTemplate.exchange(
                 "/api/orders/" + order.getId(), HttpMethod.DELETE, withAuth(null, opsLogin.token()), Map.class);
@@ -303,12 +372,11 @@ public class OrderControllerIT {
                 "/api/auth/login", new LoginRequest(opsEmail, "password123"), AuthResponse.class);
         assert opsLogin != null;
 
+        Customer customer = createCustomer(adminToken);
         Product product = createProductWithStock(adminToken, 10);
 
-        // Order creation and confirmation are open to any authenticated
-        // staff, unlike deletion, which is admin-only (tested above).
         ResponseEntity<Order> created = restTemplate.exchange(
-                "/api/orders", HttpMethod.POST, withAuth(orderRequestFor(product, 2), opsLogin.token()), Order.class);
+                "/api/orders", HttpMethod.POST, withAuth(orderRequestFor(customer, product, 2), opsLogin.token()), Order.class);
         assertThat(created.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
         assert created.getBody() != null;

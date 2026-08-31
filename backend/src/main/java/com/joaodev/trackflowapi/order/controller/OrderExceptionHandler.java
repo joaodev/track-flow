@@ -1,9 +1,7 @@
 package com.joaodev.trackflowapi.order.controller;
 
 import com.joaodev.trackflowapi.common.error.ErrorResponse;
-import com.joaodev.trackflowapi.order.service.InvalidOrderStatusException;
-import com.joaodev.trackflowapi.order.service.OrderNotFoundException;
-import com.joaodev.trackflowapi.order.service.ProductNotOrderableException;
+import com.joaodev.trackflowapi.order.service.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,6 +24,18 @@ public class OrderExceptionHandler {
 
     @ExceptionHandler(ProductNotOrderableException.class)
     public ResponseEntity<ErrorResponse> handleNotOrderable(ProductNotOrderableException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ErrorResponse.of(ex.getErrorCode(), ex.getMessage()));
+    }
+
+    @ExceptionHandler(CustomerNotOrderableException.class)
+    public ResponseEntity<ErrorResponse> handleCustomerNotOrderable(CustomerNotOrderableException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ErrorResponse.of(ex.getErrorCode(), ex.getMessage()));
+    }
+
+    @ExceptionHandler(CarrierNotOrderableException.class)
+    public ResponseEntity<ErrorResponse> handleCarrierNotOrderable(CarrierNotOrderableException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(ErrorResponse.of(ex.getErrorCode(), ex.getMessage()));
     }

@@ -1,5 +1,7 @@
 package com.joaodev.trackflowapi.shipment.service;
 
+import com.joaodev.trackflowapi.carrier.domain.Carrier;
+import com.joaodev.trackflowapi.carrier.repository.CarrierRepository;
 import com.joaodev.trackflowapi.shipment.domain.Shipment;
 import com.joaodev.trackflowapi.shipment.domain.TrackingEvent;
 import com.joaodev.trackflowapi.shipment.dto.CreateShipmentRequest;
@@ -33,13 +35,14 @@ public class ShipmentService {
 
     @Transactional
     public Shipment createShipment(CreateShipmentRequest request) {
+
         LocalDateTime now = LocalDateTime.now();
 
         Shipment shipment = Shipment.builder()
                 .trackingCode(generateTrackingCode())
                 .origin(request.origin())
                 .destination(request.destination())
-                .carrier(request.carrier())
+                .carrier(request.carrierName())
                 .status("CREATED")
                 .deleted(false)
                 .createdAt(now)

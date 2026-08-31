@@ -2,14 +2,12 @@ package com.joaodev.trackflowapi.shipment.controller;
 
 import com.joaodev.trackflowapi.shipment.domain.Shipment;
 import com.joaodev.trackflowapi.shipment.domain.TrackingEvent;
-import com.joaodev.trackflowapi.shipment.dto.CreateShipmentRequest;
 import com.joaodev.trackflowapi.shipment.dto.UpdateShipmentStatusRequest;
 import com.joaodev.trackflowapi.shipment.service.ShipmentService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -20,14 +18,6 @@ public class ShipmentController {
 
     public ShipmentController(ShipmentService shipmentService) {
         this.shipmentService = shipmentService;
-    }
-
-    @PostMapping
-    public ResponseEntity<Shipment> createShipment(@Valid @RequestBody CreateShipmentRequest request) {
-        Shipment created = shipmentService.createShipment(request);
-        return ResponseEntity
-                .created(URI.create("/api/shipments/" + created.getTrackingCode()))
-                .body(created);
     }
 
     @GetMapping("/{trackingCode}")

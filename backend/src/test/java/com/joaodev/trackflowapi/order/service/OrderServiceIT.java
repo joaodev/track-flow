@@ -1,5 +1,11 @@
 package com.joaodev.trackflowapi.order.service;
 
+import com.joaodev.trackflowapi.carrier.domain.Carrier;
+import com.joaodev.trackflowapi.carrier.dto.CarrierRequest;
+import com.joaodev.trackflowapi.carrier.service.CarrierService;
+import com.joaodev.trackflowapi.customer.domain.Customer;
+import com.joaodev.trackflowapi.customer.dto.CustomerRequest;
+import com.joaodev.trackflowapi.customer.service.CustomerService;
 import com.joaodev.trackflowapi.inventory.domain.Inventory;
 import com.joaodev.trackflowapi.inventory.repository.InventoryRepository;
 import com.joaodev.trackflowapi.order.domain.Order;
@@ -36,11 +42,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 /**
  * Covers the Order state machine end to end: PENDING -> CONFIRMED -> SHIPPED
  * -> DELIVERED, and CANCELLED from each of the first three. Since OrderService
- * calls ProductService/InventoryService/ShipmentService directly (not via
- * events), those side effects are asserted synchronously. The one exception
- * is the SHIPPED -> DELIVERED transition, which happens through
- * ShipmentDeliveredEventListener — @Async, like ProductCreatedEventListener —
- * so that one test polls instead of asserting immediately.
+ * calls ProductService/InventoryService/ShipmentService/CustomerService/
+ * CarrierService directly (not via events), those side effects are asserted
+ * synchronously. The one exception is the SHIPPED -> DELIVERED transition,
+ * which happens through ShipmentDeliveredEventListener — @Async, like
+ * ProductCreatedEventListener — so that one test polls instead of asserting
+ * immediately.
  */
 @SpringBootTest
 @Testcontainers
@@ -67,6 +74,12 @@ public class OrderServiceIT {
     private ProductService productService;
 
     @Autowired
+    private CustomerService customerService;
+
+    @Autowired
+    private CarrierService carrierService;
+
+    @Autowired
     private InventoryRepository inventoryRepository;
 
     @Autowired
@@ -84,6 +97,15 @@ public class OrderServiceIT {
                 new CreateProductRequest(uniqueSku(), "Order Test Product", null, new BigDecimal("50.00"), initialQuantity));
         waitForInventory(product.getId());
         return product;
+    }
+
+    private Customer createActiveCustomer() {
+        return customerService.createCustomer(new CustomerRequest(
+                "Jane Doe", "jane-" + UUID.randomUUID() + "@example.com", "555-0100", "123 Main St"));
+    }
+
+    private Carrier createActiveCarrier() {
+        return carrierService.createCarrier(new CarrierRequest("FastCarrier", "555-0200"));
     }
 
     private Inventory waitForInventory(Long productId) {
@@ -106,19 +128,21 @@ public class OrderServiceIT {
         }
     }
 
-    private CreateOrderRequest orderFor(Product product, int quantity) {
+    private CreateOrderRequest orderFor(Customer customer, Product product, int quantity) {
         return new CreateOrderRequest(
-                "Jane Doe", "Warehouse A", "123 Main St",
+                customer.getId(), "Warehouse A", "123 Main St",
                 List.of(new OrderItemRequest(product.getId(), quantity)));
     }
 
     @Test
     void createOrderStartsAsPendingWithoutReservingStock() {
+        Customer customer = createActiveCustomer();
         Product product = createActiveProduct(20);
 
-        Order order = orderService.createOrder(orderFor(product, 5));
+        Order order = orderService.createOrder(orderFor(customer, product, 5));
 
         assertThat(order.getStatus()).isEqualTo("PENDING");
+        assertThat(order.getCustomerId()).isEqualTo(customer.getId());
         assertThat(order.getShipmentId()).isNull();
 
         List<OrderItem> items = orderService.getItems(order.getId());
@@ -126,24 +150,35 @@ public class OrderServiceIT {
         assertThat(items.getFirst().getQuantity()).isEqualTo(5);
         assertThat(items.getFirst().getUnitPriceAtOrder()).isEqualByComparingTo("50.00");
 
-        // Placing the order must not touch inventory yet — only confirming does.
         Inventory inventory = inventoryRepository.findByProductId(product.getId()).orElseThrow();
         assertThat(inventory.getQuantityReserved()).isZero();
     }
 
     @Test
+    void creatingOrderForInactiveCustomerThrows() {
+        Customer customer = createActiveCustomer();
+        customerService.setActive(customer.getId(), false);
+        Product product = createActiveProduct(10);
+
+        assertThatThrownBy(() -> orderService.createOrder(orderFor(customer, product, 1)))
+                .isInstanceOf(CustomerNotOrderableException.class);
+    }
+
+    @Test
     void creatingOrderForInactiveProductThrows() {
+        Customer customer = createActiveCustomer();
         Product product = createActiveProduct(10);
         productService.setActive(product.getId(), false);
 
-        assertThatThrownBy(() -> orderService.createOrder(orderFor(product, 1)))
+        assertThatThrownBy(() -> orderService.createOrder(orderFor(customer, product, 1)))
                 .isInstanceOf(ProductNotOrderableException.class);
     }
 
     @Test
     void confirmOrderReservesStockAndTransitionsToConfirmed() {
+        Customer customer = createActiveCustomer();
         Product product = createActiveProduct(20);
-        Order order = orderService.createOrder(orderFor(product, 8));
+        Order order = orderService.createOrder(orderFor(customer, product, 8));
 
         Order confirmed = orderService.confirmOrder(order.getId());
 
@@ -151,13 +186,14 @@ public class OrderServiceIT {
 
         Inventory inventory = inventoryRepository.findByProductId(product.getId()).orElseThrow();
         assertThat(inventory.getQuantityReserved()).isEqualTo(8);
-        assertThat(inventory.getQuantityOnHand()).isEqualTo(20); // unchanged until shipped
+        assertThat(inventory.getQuantityOnHand()).isEqualTo(20);
     }
 
     @Test
     void confirmingOrderWithInsufficientStockThrowsAndLeavesOrderPending() {
+        Customer customer = createActiveCustomer();
         Product product = createActiveProduct(3);
-        Order order = orderService.createOrder(orderFor(product, 10));
+        Order order = orderService.createOrder(orderFor(customer, product, 10));
 
         assertThatThrownBy(() -> orderService.confirmOrder(order.getId()))
                 .isInstanceOf(com.joaodev.trackflowapi.inventory.service.InsufficientStockException.class);
@@ -168,8 +204,9 @@ public class OrderServiceIT {
 
     @Test
     void confirmingAlreadyConfirmedOrderThrows() {
+        Customer customer = createActiveCustomer();
         Product product = createActiveProduct(20);
-        Order order = orderService.createOrder(orderFor(product, 2));
+        Order order = orderService.createOrder(orderFor(customer, product, 2));
         orderService.confirmOrder(order.getId());
 
         assertThatThrownBy(() -> orderService.confirmOrder(order.getId()))
@@ -178,38 +215,56 @@ public class OrderServiceIT {
 
     @Test
     void shipOrderFulfillsStockCreatesShipmentAndTransitionsToShipped() {
+        Customer customer = createActiveCustomer();
         Product product = createActiveProduct(20);
-        Order order = orderService.createOrder(orderFor(product, 6));
+        Carrier carrier = createActiveCarrier();
+        Order order = orderService.createOrder(orderFor(customer, product, 6));
         orderService.confirmOrder(order.getId());
 
-        Order shipped = orderService.shipOrder(order.getId(), new ShipOrderRequest("FastCarrier"));
+        Order shipped = orderService.shipOrder(order.getId(), new ShipOrderRequest(carrier.getId()));
 
         assertThat(shipped.getStatus()).isEqualTo("SHIPPED");
         assertThat(shipped.getShipmentId()).isNotNull();
 
         Inventory inventory = inventoryRepository.findByProductId(product.getId()).orElseThrow();
-        assertThat(inventory.getQuantityOnHand()).isEqualTo(14); // 20 - 6, physically decremented
-        assertThat(inventory.getQuantityReserved()).isZero(); // reservation cleared on fulfillment
+        assertThat(inventory.getQuantityOnHand()).isEqualTo(14);
+        assertThat(inventory.getQuantityReserved()).isZero();
 
         Shipment shipment = shipmentService.findById(shipped.getShipmentId());
         assertThat(shipment.getOrigin()).isEqualTo(order.getOrigin());
         assertThat(shipment.getDestination()).isEqualTo(order.getDestination());
-        assertThat(shipment.getCarrier()).isEqualTo("FastCarrier");
+        assertThat(shipment.getCarrier()).isEqualTo(carrier.getName());
+    }
+
+    @Test
+    void shippingWithInactiveCarrierThrows() {
+        Customer customer = createActiveCustomer();
+        Product product = createActiveProduct(20);
+        Carrier carrier = createActiveCarrier();
+        carrierService.setActive(carrier.getId(), false);
+        Order order = orderService.createOrder(orderFor(customer, product, 2));
+        orderService.confirmOrder(order.getId());
+
+        assertThatThrownBy(() -> orderService.shipOrder(order.getId(), new ShipOrderRequest(carrier.getId())))
+                .isInstanceOf(CarrierNotOrderableException.class);
     }
 
     @Test
     void shippingUnconfirmedOrderThrows() {
+        Customer customer = createActiveCustomer();
         Product product = createActiveProduct(20);
-        Order order = orderService.createOrder(orderFor(product, 2));
+        Carrier carrier = createActiveCarrier();
+        Order order = orderService.createOrder(orderFor(customer, product, 2));
 
-        assertThatThrownBy(() -> orderService.shipOrder(order.getId(), new ShipOrderRequest("AnyCarrier")))
+        assertThatThrownBy(() -> orderService.shipOrder(order.getId(), new ShipOrderRequest(carrier.getId())))
                 .isInstanceOf(InvalidOrderStatusException.class);
     }
 
     @Test
     void cancellingPendingOrderDoesNotTouchInventory() {
+        Customer customer = createActiveCustomer();
         Product product = createActiveProduct(20);
-        Order order = orderService.createOrder(orderFor(product, 5));
+        Order order = orderService.createOrder(orderFor(customer, product, 5));
 
         Order cancelled = orderService.cancelOrder(order.getId());
 
@@ -221,8 +276,9 @@ public class OrderServiceIT {
 
     @Test
     void cancellingConfirmedOrderReleasesReservedStock() {
+        Customer customer = createActiveCustomer();
         Product product = createActiveProduct(20);
-        Order order = orderService.createOrder(orderFor(product, 7));
+        Order order = orderService.createOrder(orderFor(customer, product, 7));
         orderService.confirmOrder(order.getId());
 
         Order cancelled = orderService.cancelOrder(order.getId());
@@ -230,15 +286,17 @@ public class OrderServiceIT {
         assertThat(cancelled.getStatus()).isEqualTo("CANCELLED");
         Inventory inventory = inventoryRepository.findByProductId(product.getId()).orElseThrow();
         assertThat(inventory.getQuantityReserved()).isZero();
-        assertThat(inventory.getQuantityOnHand()).isEqualTo(20); // never left the warehouse
+        assertThat(inventory.getQuantityOnHand()).isEqualTo(20);
     }
 
     @Test
     void cancellingShippedOrderCancelsTheShipmentButDoesNotRestock() {
+        Customer customer = createActiveCustomer();
         Product product = createActiveProduct(20);
-        Order order = orderService.createOrder(orderFor(product, 4));
+        Carrier carrier = createActiveCarrier();
+        Order order = orderService.createOrder(orderFor(customer, product, 4));
         orderService.confirmOrder(order.getId());
-        Order shipped = orderService.shipOrder(order.getId(), new ShipOrderRequest("SlowCarrier"));
+        Order shipped = orderService.shipOrder(order.getId(), new ShipOrderRequest(carrier.getId()));
 
         Order cancelled = orderService.cancelOrder(shipped.getId());
 
@@ -247,18 +305,18 @@ public class OrderServiceIT {
         Shipment shipment = shipmentService.findById(cancelled.getShipmentId());
         assertThat(shipment.getStatus()).isEqualTo("CANCELLED");
 
-        // Deliberately not restocked — see the design note on cancelOrder():
-        // physically fulfilled stock requires a real return workflow, out of scope.
         Inventory inventory = inventoryRepository.findByProductId(product.getId()).orElseThrow();
-        assertThat(inventory.getQuantityOnHand()).isEqualTo(16); // still decremented
+        assertThat(inventory.getQuantityOnHand()).isEqualTo(16);
     }
 
     @Test
     void cancellingDeliveredOrderThrows() {
+        Customer customer = createActiveCustomer();
         Product product = createActiveProduct(20);
-        Order order = orderService.createOrder(orderFor(product, 2));
+        Carrier carrier = createActiveCarrier();
+        Order order = orderService.createOrder(orderFor(customer, product, 2));
         orderService.confirmOrder(order.getId());
-        Order shipped = orderService.shipOrder(order.getId(), new ShipOrderRequest("Carrier"));
+        Order shipped = orderService.shipOrder(order.getId(), new ShipOrderRequest(carrier.getId()));
 
         deliverShipmentAndWaitForOrder(shipped);
 
@@ -268,18 +326,18 @@ public class OrderServiceIT {
 
     @Test
     void shipmentDeliveredEventuallyMarksOrderAsDelivered() {
+        Customer customer = createActiveCustomer();
         Product product = createActiveProduct(20);
-        Order order = orderService.createOrder(orderFor(product, 3));
+        Carrier carrier = createActiveCarrier();
+        Order order = orderService.createOrder(orderFor(customer, product, 3));
         orderService.confirmOrder(order.getId());
-        Order shipped = orderService.shipOrder(order.getId(), new ShipOrderRequest("Carrier"));
+        Order shipped = orderService.shipOrder(order.getId(), new ShipOrderRequest(carrier.getId()));
 
         Order delivered = deliverShipmentAndWaitForOrder(shipped);
 
         assertThat(delivered.getStatus()).isEqualTo("DELIVERED");
     }
 
-    /** Updates the linked Shipment to DELIVERED, then polls the Order until
-     * ShipmentDeliveredEventListener (@Async) has reacted to it. */
     private Order deliverShipmentAndWaitForOrder(Order shippedOrder) {
         Shipment shipment = shipmentService.findById(shippedOrder.getShipmentId());
         shipmentService.updateStatus(shipment.getTrackingCode(),
@@ -298,8 +356,9 @@ public class OrderServiceIT {
 
     @Test
     void deleteOrderSoftDeletesAndExcludesFromFindAll() {
+        Customer customer = createActiveCustomer();
         Product product = createActiveProduct(10);
-        Order order = orderService.createOrder(orderFor(product, 1));
+        Order order = orderService.createOrder(orderFor(customer, product, 1));
 
         orderService.deleteOrder(order.getId());
 
@@ -319,8 +378,9 @@ public class OrderServiceIT {
 
     @Test
     void everyStatusTransitionPublishesOrderStatusChangedEvent() {
+        Customer customer = createActiveCustomer();
         Product product = createActiveProduct(20);
-        Order order = orderService.createOrder(orderFor(product, 2));
+        Order order = orderService.createOrder(orderFor(customer, product, 2));
         orderService.confirmOrder(order.getId());
 
         List<OrderStatusChangedEvent> published = applicationEvents
