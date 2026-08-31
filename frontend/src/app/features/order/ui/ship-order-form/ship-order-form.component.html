@@ -4,8 +4,12 @@
   <div mat-dialog-content>
     <mat-form-field appearance="outline">
       <mat-label>{{ 'order.shipForm.carrierLabel' | translate }}</mat-label>
-      <input matInput formControlName="carrier" />
-      @if (form.controls.carrier.invalid && form.controls.carrier.touched) {
+      <mat-select formControlName="carrierId">
+        @for (carrier of carriers$ | async; track carrier.id) {
+          <mat-option [value]="carrier.id">{{ carrier.name }}</mat-option>
+        }
+      </mat-select>
+      @if (form.controls.carrierId.invalid && form.controls.carrierId.touched) {
         <mat-error>{{ 'order.shipForm.carrierError' | translate }}</mat-error>
       }
     </mat-form-field>

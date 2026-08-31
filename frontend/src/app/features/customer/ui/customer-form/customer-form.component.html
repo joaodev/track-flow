@@ -1,0 +1,44 @@
+<h2 mat-dialog-title>{{ (isEditMode ? 'customer.form.editTitle' : 'customer.form.createTitle') | translate }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div mat-dialog-content>
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'customer.form.nameLabel' | translate }}</mat-label>
+      <input matInput formControlName="name" />
+      @if (form.controls.name.invalid && form.controls.name.touched) {
+        <mat-error>{{ 'customer.form.nameError' | translate }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'customer.form.emailLabel' | translate }}</mat-label>
+      <input matInput type="email" formControlName="email" />
+      @if (form.controls.email.invalid && form.controls.email.touched) {
+        <mat-error>{{ 'customer.form.emailError' | translate }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'customer.form.phoneLabel' | translate }}</mat-label>
+      <input matInput formControlName="phone" />
+      @if (form.controls.phone.invalid && form.controls.phone.touched) {
+        <mat-error>{{ 'customer.form.phoneError' | translate }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'customer.form.addressLabel' | translate }}</mat-label>
+      <input matInput formControlName="address" />
+      @if (form.controls.address.invalid && form.controls.address.touched) {
+        <mat-error>{{ 'customer.form.addressError' | translate }}</mat-error>
+      }
+    </mat-form-field>
+  </div>
+
+  <div mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="onCancel()">{{ 'common.cancel' | translate }}</button>
+    <button mat-raised-button color="primary" type="submit">
+      {{ (isEditMode ? 'customer.form.submitUpdate' : 'customer.form.submitCreate') | translate }}
+    </button>
+  </div>
+</form>

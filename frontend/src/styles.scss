@@ -34,6 +34,7 @@ html {
   --status-pending: var(--card-gray);
   --status-confirmed: var(--card-blue);
   --status-shipped: var(--card-amber);
+  --status-out-for-delivery: var(--card-blue);
 }
 
 body {
@@ -110,4 +111,9 @@ table.mat-mdc-table .mat-mdc-header-row {
 .status-pill--shipped {
   background: color-mix(in srgb, var(--status-shipped) 20%, transparent);
   color: var(--status-shipped);
+}
+
+.status-pill--out_for_delivery {
+  background: color-mix(in srgb, var(--status-out-for-delivery) 20%, transparent);
+  color: var(--status-out-for-delivery);
 }

@@ -22,10 +22,13 @@
   },
   "appShell": {
     "brand": "Track Flow",
+    "navDashboard": "Dashboard",
     "navTrack": "Track",
     "navShipments": "Shipments",
     "navProducts": "Products",
     "navOrders": "Orders",
+    "navCustomers": "Customers",
+    "navCarriers": "Carriers",
     "navUsers": "Users",
     "logout": "Log Out"
   },
@@ -115,6 +118,100 @@
       "message": "Are you sure you want to delete shipment {{code}}? This cannot be undone."
     }
   },
+  "customer": {
+    "management": {
+      "title": "Customers",
+      "newCustomer": "New Customer"
+    },
+    "table": {
+      "columnName": "Name",
+      "columnEmail": "Email",
+      "columnPhone": "Phone",
+      "columnStatus": "Status",
+      "searchLabel": "Search",
+      "searchPlaceholder": "Name, email...",
+      "editTooltip": "Edit customer",
+      "deleteTooltip": "Delete customer",
+      "noResults": "No customers match your search."
+    },
+    "form": {
+      "createTitle": "New Customer",
+      "editTitle": "Edit Customer",
+      "nameLabel": "Name",
+      "nameError": "Name is required",
+      "emailLabel": "Email",
+      "emailError": "A valid email is required",
+      "phoneLabel": "Phone",
+      "phoneError": "Phone is required",
+      "addressLabel": "Address",
+      "addressError": "Address is required",
+      "submitCreate": "Create Customer",
+      "submitUpdate": "Save Changes"
+    },
+    "deleteConfirm": {
+      "title": "Delete customer",
+      "message": "Are you sure you want to delete {{name}}? This cannot be undone."
+    }
+  },
+  "carrier": {
+    "management": {
+      "title": "Carriers",
+      "newCarrier": "New Carrier"
+    },
+    "table": {
+      "columnName": "Name",
+      "columnContact": "Contact",
+      "columnStatus": "Status",
+      "searchLabel": "Search",
+      "searchPlaceholder": "Name...",
+      "editTooltip": "Edit carrier",
+      "deleteTooltip": "Delete carrier",
+      "noResults": "No carriers match your search."
+    },
+    "form": {
+      "createTitle": "New Carrier",
+      "editTitle": "Edit Carrier",
+      "nameLabel": "Name",
+      "nameError": "Name is required",
+      "contactLabel": "Contact",
+      "submitCreate": "Create Carrier",
+      "submitUpdate": "Save Changes"
+    },
+    "deleteConfirm": {
+      "title": "Delete carrier",
+      "message": "Are you sure you want to delete {{name}}? This cannot be undone."
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "sections": {
+      "shipments": "Shipments",
+      "orders": "Orders",
+      "catalog": "Catalog",
+      "partners": "Customers & Carriers",
+      "staff": "Staff"
+    },
+    "orders": {
+      "total": "Total Orders"
+    },
+    "products": {
+      "total": "Total Products",
+      "active": "Active Products",
+      "lowStock": "Low Stock"
+    },
+    "customers": {
+      "total": "Total Customers",
+      "active": "Active Customers"
+    },
+    "carriers": {
+      "total": "Total Carriers",
+      "active": "Active Carriers"
+    },
+    "users": {
+      "total": "Total Users",
+      "active": "Active Users"
+    }
+  },
   "order": {
     "management": {
       "title": "Orders",
@@ -142,8 +239,8 @@
     },
     "form": {
       "createTitle": "New Order",
-      "customerNameLabel": "Customer",
-      "customerNameError": "Customer name is required",
+      "customerLabel": "Customer",
+      "customerError": "Select a customer",
       "originLabel": "Origin",
       "originError": "Origin is required",
       "destinationLabel": "Destination",
@@ -264,6 +361,10 @@
     "UNAUTHENTICATED": "Authentication is required to access this resource",
     "ORDER_NOT_FOUND": "Order not found",
     "INVALID_ORDER_STATUS": "The order isn't in the required status for this action",
-    "PRODUCT_NOT_ORDERABLE": "This product isn't available for ordering"
+    "PRODUCT_NOT_ORDERABLE": "This product isn't available for ordering",
+    "CUSTOMER_NOT_FOUND": "Customer not found",
+    "CARRIER_NOT_FOUND": "Carrier not found",
+    "CUSTOMER_NOT_ORDERABLE": "This customer isn't active and cannot place orders",
+    "CARRIER_NOT_ORDERABLE": "This carrier isn't available for shipping"
   }
 }

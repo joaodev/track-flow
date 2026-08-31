@@ -12,6 +12,10 @@ import { selectAllOrders, selectError } from '../../data-access/order.selectors'
 import { CreateOrderRequest, Order, ShipOrderRequest } from '../../data-access/order.model';
 import { ProductActions } from '../../../product/data-access/product.actions';
 import { TranslatePipe } from '../../../../core/translate.pipe';
+import { selectAllCustomers } from '../../../customer/data-access/customer.selectors';
+import { map } from 'rxjs';
+import { CustomerActions } from '../../../customer/data-access/customer.actions';
+import { CarrierActions } from '../../../carrier/data-access/carrier.actions';
 
 @Component({
   selector: 'app-order-management',
@@ -27,10 +31,17 @@ export class OrderManagementComponent implements OnInit {
   orders$ = this.store.select(selectAllOrders);
   error$ = this.store.select(selectError);
 
+  customersById$ = this.store
+    .select(selectAllCustomers)
+    .pipe(map((customers) => Object.fromEntries(
+      customers.map((c) => [c.id, c])))
+    );
+
   ngOnInit(): void {
     this.store.dispatch(OrderActions.loadOrders());
-    // The order form needs the product catalog for its item picker.
     this.store.dispatch(ProductActions.loadProducts());
+    this.store.dispatch(CustomerActions.loadCustomers());
+    this.store.dispatch(CarrierActions.loadCarriers());
   }
 
   onOpenCreateForm(): void {

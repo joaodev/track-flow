@@ -4,7 +4,7 @@
 
 <div mat-dialog-content>
   <p class="route">{{ data.order.origin }} → {{ data.order.destination }}</p>
-  <p class="customer">{{ data.order.customerName }}</p>
+  <p class="customer">{{ customerName$ | async }}</p>
 
   <span class="status-pill" [class]="'status-pill--' + data.order.status.toLowerCase()">
     {{ ('order.status.' + data.order.status) | translate }}

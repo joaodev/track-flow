@@ -19,6 +19,8 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Order } from '../../data-access/order.model';
 import { TranslatePipe } from '../../../../core/translate.pipe';
+import { Dictionary } from '@ngrx/entity';
+import { Customer } from '../../../customer/data-access/customer.model';
 
 @Component({
   selector: 'app-order-table',
@@ -44,6 +46,7 @@ export class OrderTableComponent implements OnChanges, AfterViewInit {
   @Output() confirmOrder = new EventEmitter<Order>();
   @Output() shipOrder = new EventEmitter<Order>();
   @Output() cancelOrder = new EventEmitter<Order>();
+  @Input({ required: true }) customersById: Dictionary<Customer> = {};
 
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;

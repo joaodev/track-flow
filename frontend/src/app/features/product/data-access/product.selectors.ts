@@ -10,3 +10,8 @@ export const selectAllProducts = createSelector(selectProductState, selectAll);
 export const selectActiveProducts = createSelector(selectAllProducts, (products) =>
   products.filter((p) => p.active),
 );
+
+export const selectProductStats = createSelector(selectAllProducts, (products) => ({
+  total: products.length,
+  active: products.filter((p) => p.active).length,
+}));

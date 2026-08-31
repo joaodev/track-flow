@@ -1,6 +1,5 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
 import {
-  CreateShipmentRequest,
   Shipment,
   TrackingEvent,
   UpdateShipmentStatusRequest,
@@ -17,10 +16,6 @@ export const ShipmentActions = createActionGroup({
     'Load Shipment': props<{ trackingCode: string }>(),
     'Load Shipment Success': props<{ shipment: Shipment }>(),
     'Load Shipment Failure': props<{ error: string }>(),
-
-    'Create Shipment': props<{ request: CreateShipmentRequest }>(),
-    'Create Shipment Success': props<{ shipment: Shipment }>(),
-    'Create Shipment Failure': props<{ error: string }>(),
 
     'Update Shipment Status': props<{
       trackingCode: string;

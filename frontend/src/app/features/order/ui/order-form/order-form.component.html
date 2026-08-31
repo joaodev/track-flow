@@ -3,10 +3,14 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <div mat-dialog-content>
     <mat-form-field appearance="outline">
-      <mat-label>{{ 'order.form.customerNameLabel' | translate }}</mat-label>
-      <input matInput formControlName="customerName" />
-      @if (form.controls.customerName.invalid && form.controls.customerName.touched) {
-        <mat-error>{{ 'order.form.customerNameError' | translate }}</mat-error>
+      <mat-label>{{ 'order.form.customerLabel' | translate }}</mat-label>
+      <mat-select formControlName="customerId">
+        @for (customer of customers$ | async; track customer.id) {
+          <mat-option [value]="customer.id">{{ customer.name }}</mat-option>
+        }
+      </mat-select>
+      @if (form.controls.customerId.invalid && form.controls.customerId.touched) {
+        <mat-error>{{ 'order.form.customerError' | translate }}</mat-error>
       }
     </mat-form-field>
 

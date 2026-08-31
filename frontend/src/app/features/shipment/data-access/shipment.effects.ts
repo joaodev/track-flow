@@ -29,20 +29,6 @@ export class ShipmentEffects {
     ),
   );
 
-  createShipment$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(ShipmentActions.createShipment),
-      mergeMap(({ request }) =>
-        this.shipmentService.create(request).pipe(
-          map((shipment) => ShipmentActions.createShipmentSuccess({ shipment })),
-          catchError((error) =>
-            of(ShipmentActions.createShipmentFailure({ error: extractErrorCode(error) })),
-          ),
-        ),
-      ),
-    ),
-  );
-
   updateShipmentStatus$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ShipmentActions.updateShipmentStatus),
@@ -77,14 +63,6 @@ export class ShipmentEffects {
       mergeMap(({ shipments }) =>
         merge(...shipments.map((shipment) => this.socketService.watch(shipment.trackingCode))),
       ),
-      map((event) => this.toShipmentAction(event)),
-    ),
-  );
-
-  watchNewShipment$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(ShipmentActions.createShipmentSuccess),
-      mergeMap(({ shipment }) => this.socketService.watch(shipment.trackingCode)),
       map((event) => this.toShipmentAction(event)),
     ),
   );

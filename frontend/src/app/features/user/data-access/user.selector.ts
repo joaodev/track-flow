@@ -10,3 +10,8 @@ export const {
 export const selectAllUsers = createSelector(
   selectUserState, userAdapter.getSelectors().selectAll
 );
+
+export const selectUserStats = createSelector(selectAllUsers, (users) => ({
+  total: users.length,
+  active: users.filter((u) => u.active).length,
+}));

@@ -1,7 +1,6 @@
 <div class="shipment-list-page">
   <header>
     <h1>{{ 'shipment.list.title' | translate }}</h1>
-    <button mat-raised-button color="primary" (click)="onOpenCreateForm()">{{ 'shipment.list.newShipment' | translate }}</button>
   </header>
 
   @if (stats$ | async; as stats) {

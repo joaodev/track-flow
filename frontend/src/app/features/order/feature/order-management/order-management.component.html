@@ -8,11 +8,14 @@
     <p>{{ ('errors.' + error) | translate }}</p>
   }
 
-  <app-order-table
-    [orders]="(orders$ | async) ?? []"
-    (viewDetails)="onViewDetails($event)"
-    (confirmOrder)="onConfirmOrder($event)"
-    (shipOrder)="onShipOrder($event)"
-    (cancelOrder)="onCancelOrder($event)"
-  />
+  @if (customersById$ | async; as customersById) {
+    <app-order-table
+      [orders]="(orders$ | async) ?? []"
+      [customersById]="customersById"
+      (viewDetails)="onViewDetails($event)"
+      (confirmOrder)="onConfirmOrder($event)"
+      (shipOrder)="onShipOrder($event)"
+      (cancelOrder)="onCancelOrder($event)"
+    />
+  }
 </div>

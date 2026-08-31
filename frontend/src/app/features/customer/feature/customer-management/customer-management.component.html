@@ -1,0 +1,18 @@
+<div class="customer-management-page">
+  <header>
+    <h1>{{ 'customer.management.title' | translate }}</h1>
+    <button mat-raised-button color="primary" (click)="onOpenCreateForm()">{{ 'customer.management.newCustomer' | translate }}</button>
+  </header>
+
+  @if (error$ | async; as error) {
+    <p>{{ ('errors.' + error) | translate }}</p>
+  }
+
+  <app-customer-table
+    [customers]="(customers$ | async) ?? []"
+    [isAdmin]="(isAdmin$ | async) ?? false"
+    (editCustomer)="onEditCustomer($event)"
+    (toggleActive)="onToggleActive($event)"
+    (deleteCustomer)="onDeleteCustomer($event)"
+  />
+</div>

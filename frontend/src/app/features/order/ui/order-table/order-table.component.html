@@ -16,7 +16,7 @@
 
     <ng-container matColumnDef="customerName">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'order.table.columnCustomer' | translate }}</th>
-      <td mat-cell *matCellDef="let order">{{ order.customerName }}</td>
+      <td mat-cell *matCellDef="let order">{{ customersById[order.customerId]?.name ?? '—' }}</td>
     </ng-container>
 
     <ng-container matColumnDef="destination">

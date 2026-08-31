@@ -22,10 +22,13 @@
   },
   "appShell": {
     "brand": "Track Flow",
+    "navDashboard": "Panel",
     "navTrack": "Rastrear",
     "navShipments": "Envíos",
     "navProducts": "Productos",
     "navOrders": "Pedidos",
+    "navCustomers": "Clientes",
+    "navCarriers": "Transportistas",
     "navUsers": "Usuarios",
     "logout": "Cerrar Sesión"
   },
@@ -115,6 +118,100 @@
       "message": "¿Seguro que deseas eliminar el envío {{code}}? Esta acción no se puede deshacer."
     }
   },
+  "customer": {
+    "management": {
+      "title": "Clientes",
+      "newCustomer": "Nuevo Cliente"
+    },
+    "table": {
+      "columnName": "Nombre",
+      "columnEmail": "Correo electrónico",
+      "columnPhone": "Teléfono",
+      "columnStatus": "Estado",
+      "searchLabel": "Buscar",
+      "searchPlaceholder": "Nombre, correo...",
+      "editTooltip": "Editar cliente",
+      "deleteTooltip": "Eliminar cliente",
+      "noResults": "No se encontraron clientes para tu búsqueda."
+    },
+    "form": {
+      "createTitle": "Nuevo Cliente",
+      "editTitle": "Editar Cliente",
+      "nameLabel": "Nombre",
+      "nameError": "El nombre es obligatorio",
+      "emailLabel": "Correo electrónico",
+      "emailError": "Se requiere un correo electrónico válido",
+      "phoneLabel": "Teléfono",
+      "phoneError": "El teléfono es obligatorio",
+      "addressLabel": "Dirección",
+      "addressError": "La dirección es obligatoria",
+      "submitCreate": "Crear Cliente",
+      "submitUpdate": "Guardar Cambios"
+    },
+    "deleteConfirm": {
+      "title": "Eliminar cliente",
+      "message": "¿Seguro que deseas eliminar a {{name}}? Esta acción no se puede deshacer."
+    }
+  },
+  "carrier": {
+    "management": {
+      "title": "Transportistas",
+      "newCarrier": "Nuevo Transportista"
+    },
+    "table": {
+      "columnName": "Nombre",
+      "columnContact": "Contacto",
+      "columnStatus": "Estado",
+      "searchLabel": "Buscar",
+      "searchPlaceholder": "Nombre...",
+      "editTooltip": "Editar transportista",
+      "deleteTooltip": "Eliminar transportista",
+      "noResults": "No se encontraron transportistas para tu búsqueda."
+    },
+    "form": {
+      "createTitle": "Nuevo Transportista",
+      "editTitle": "Editar Transportista",
+      "nameLabel": "Nombre",
+      "nameError": "El nombre es obligatorio",
+      "contactLabel": "Contacto",
+      "submitCreate": "Crear Transportista",
+      "submitUpdate": "Guardar Cambios"
+    },
+    "deleteConfirm": {
+      "title": "Eliminar transportista",
+      "message": "¿Seguro que deseas eliminar a {{name}}? Esta acción no se puede deshacer."
+    }
+  },
+  "dashboard": {
+    "title": "Panel",
+    "sections": {
+      "shipments": "Envíos",
+      "orders": "Pedidos",
+      "catalog": "Catálogo",
+      "partners": "Clientes y Transportistas",
+      "staff": "Equipo"
+    },
+    "orders": {
+      "total": "Total de Pedidos"
+    },
+    "products": {
+      "total": "Total de Productos",
+      "active": "Productos Activos",
+      "lowStock": "Existencias Bajas"
+    },
+    "customers": {
+      "total": "Total de Clientes",
+      "active": "Clientes Activos"
+    },
+    "carriers": {
+      "total": "Total de Transportistas",
+      "active": "Transportistas Activos"
+    },
+    "users": {
+      "total": "Total de Usuarios",
+      "active": "Usuarios Activos"
+    }
+  },
   "order": {
     "management": {
       "title": "Pedidos",
@@ -142,8 +239,8 @@
     },
     "form": {
       "createTitle": "Nuevo Pedido",
-      "customerNameLabel": "Cliente",
-      "customerNameError": "El nombre del cliente es obligatorio",
+      "customerLabel": "Cliente",
+      "customerError": "Selecciona un cliente",
       "originLabel": "Origen",
       "originError": "El origen es obligatorio",
       "destinationLabel": "Destino",
@@ -264,6 +361,10 @@
     "UNAUTHENTICATED": "Se requiere autenticación para acceder a este recurso",
     "ORDER_NOT_FOUND": "Pedido no encontrado",
     "INVALID_ORDER_STATUS": "El pedido no está en el estado necesario para esta acción",
-    "PRODUCT_NOT_ORDERABLE": "Este producto no está disponible para pedidos"
+    "PRODUCT_NOT_ORDERABLE": "Este producto no está disponible para pedidos",
+    "CUSTOMER_NOT_FOUND": "Cliente no encontrado",
+    "CARRIER_NOT_FOUND": "Transportista no encontrado",
+    "CUSTOMER_NOT_ORDERABLE": "Este cliente no está activo para hacer pedidos",
+    "CARRIER_NOT_ORDERABLE": "Este transportista no está disponible para envíos"
   }
 }

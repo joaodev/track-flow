@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { selectActiveProducts } from '../../../product/data-access/product.selectors';
+import { selectActiveCustomers } from '../../../customer/data-access/customer.selectors';
 import { CreateOrderRequest } from '../../data-access/order.model';
 import { TranslatePipe } from '../../../../core/translate.pipe';
 
@@ -35,9 +36,10 @@ export class OrderFormComponent {
   private store = inject(Store);
 
   products$ = this.store.select(selectActiveProducts);
+  customers$ = this.store.select(selectActiveCustomers);
 
   form = this.fb.nonNullable.group({
-    customerName: ['', Validators.required],
+    customerId: [null as number | null, Validators.required],
     origin: ['', Validators.required],
     destination: ['', Validators.required],
     items: this.fb.array([this.createItemGroup()]),
@@ -71,7 +73,7 @@ export class OrderFormComponent {
     }
     const value = this.form.getRawValue();
     const request: CreateOrderRequest = {
-      customerName: value.customerName,
+      customerId: value.customerId!,
       origin: value.origin,
       destination: value.destination,
       items: value.items.map((item) => ({ productId: item.productId!, quantity: item.quantity })),

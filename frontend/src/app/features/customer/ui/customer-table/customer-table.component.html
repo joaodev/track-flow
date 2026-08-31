@@ -1,0 +1,66 @@
+<div class="table-toolbar">
+  <mat-form-field appearance="outline" class="filter-field">
+    <mat-label>{{ 'customer.table.searchLabel' | translate }}</mat-label>
+    <input matInput (input)="applyFilter($any($event.target).value)" [placeholder]="'customer.table.searchPlaceholder' | translate" />
+  </mat-form-field>
+</div>
+
+<div class="table-scroll">
+  <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z1">
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'customer.table.columnName' | translate }}</th>
+      <td mat-cell *matCellDef="let customer">{{ customer.name }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'customer.table.columnEmail' | translate }}</th>
+      <td mat-cell *matCellDef="let customer">{{ customer.email }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="phone">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'customer.table.columnPhone' | translate }}</th>
+      <td mat-cell *matCellDef="let customer">{{ customer.phone }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="active">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'customer.table.columnStatus' | translate }}</th>
+      <td mat-cell *matCellDef="let customer">
+        <span class="status-pill" [class]="customer.active ? 'status-pill--delivered' : 'status-pill--cancelled'">
+          {{ (customer.active ? 'common.active' : 'common.deactivated') | translate }}
+        </span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef class="col-center"></th>
+      <td mat-cell *matCellDef="let customer" class="col-center">
+        <div class="actions-row">
+          <button mat-icon-button (click)="editCustomer.emit(customer)" [matTooltip]="'customer.table.editTooltip' | translate">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button
+            mat-stroked-button
+            [color]="customer.active ? 'warn' : 'primary'"
+            (click)="toggleActive.emit({ id: customer.id, active: !customer.active })"
+          >
+            {{ (customer.active ? 'common.deactivate' : 'common.activate') | translate }}
+          </button>
+          @if (isAdmin) {
+            <button mat-icon-button color="warn" (click)="deleteCustomer.emit(customer)" [matTooltip]="'customer.table.deleteTooltip' | translate">
+              <mat-icon>delete</mat-icon>
+            </button>
+          }
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell no-data" [attr.colspan]="displayedColumns.length">{{ 'customer.table.noResults' | translate }}</td>
+    </tr>
+  </table>
+</div>
+
+<mat-paginator [pageSizeOptions]="[5, 10, 25]" [pageSize]="10" showFirstLastButtons=""></mat-paginator>

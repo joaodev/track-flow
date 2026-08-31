@@ -27,6 +27,10 @@ import { inventoryFeature } from './features/inventory/data-access/inventory.red
 import { InventoryEffects } from './features/inventory/data-access/inventory.effects';
 import { orderFeature } from './features/order/data-access/order.reducer';
 import { OrderEffects } from './features/order/data-access/order.effects';
+import { customerFeature } from './features/customer/data-access/customer.reducer';
+import { carrierFeature } from './features/carrier/data-access/carrier.reducer';
+import { CarrierEffects } from './features/carrier/data-access/carrier.effects';
+import { CustomerEffects } from './features/customer/data-access/customer.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -44,6 +48,8 @@ export const appConfig: ApplicationConfig = {
     provideState(productFeature),
     provideState(inventoryFeature),
     provideState(orderFeature),
+    provideState(customerFeature),
+    provideState(carrierFeature),
     provideEffects(
       ShipmentEffects,
       AuthEffects,
@@ -51,6 +57,8 @@ export const appConfig: ApplicationConfig = {
       ProductEffects,
       InventoryEffects,
       OrderEffects,
+      CustomerEffects,
+      CarrierEffects,
     ),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
     { provide: MatPaginatorIntl, useClass: AppPaginatorIntl },

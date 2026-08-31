@@ -10,6 +10,7 @@ import { Order } from '../../data-access/order.model';
 import { selectAllProducts } from '../../../product/data-access/product.selectors';
 import { TranslatePipe } from '../../../../core/translate.pipe';
 import { LocalCurrencyPipe } from '../../../../core/currency/local-currency.pipe';
+import { selectAllCustomers } from '../../../customer/data-access/customer.selectors';
 
 export interface OrderDetailDialogData {
   order: Order;
@@ -28,6 +29,15 @@ export class OrderDetailDialogComponent implements OnInit {
 
   private items$ = this.store.select(selectItemsForOrder(this.data.order.id));
   private products$ = this.store.select(selectAllProducts);
+  private customers$ = this.store.select(selectAllCustomers);
+
+  customerName$ = this.customers$.pipe(
+    map(
+      (customers) =>
+        customers.find((c) => c.id === this.data.order.customerId)?.name ??
+        `#${this.data.order.customerId}`,
+    ),
+  );
 
   itemsWithProduct$ = combineLatest([this.items$, this.products$]).pipe(
     map(([items, products]) =>

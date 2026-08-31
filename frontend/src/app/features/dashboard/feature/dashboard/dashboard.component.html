@@ -1,0 +1,66 @@
+<div class="dashboard-page">
+  <h1>{{ 'dashboard.title' | translate }}</h1>
+
+  <section>
+    <h2>{{ 'dashboard.sections.shipments' | translate }}</h2>
+    @if (shipmentStats$ | async; as stats) {
+      <div class="stats-row">
+        <app-stat-card [label]="'shipment.list.statTotal' | translate" [value]="stats.total" icon="inventory_2" color="blue" />
+        <app-stat-card [label]="'shipment.list.statInTransit' | translate" [value]="stats.inTransit" icon="local_shipping" color="amber" />
+        <app-stat-card [label]="'shipment.list.statDelivered' | translate" [value]="stats.delivered" icon="check_circle" color="teal" />
+        <app-stat-card [label]="'shipment.list.statCancelled' | translate" [value]="stats.cancelled" icon="cancel" color="gray" />
+      </div>
+    }
+  </section>
+
+  <section>
+    <h2>{{ 'dashboard.sections.orders' | translate }}</h2>
+    @if (orderStats$ | async; as stats) {
+      <div class="stats-row">
+        <app-stat-card [label]="'dashboard.orders.total' | translate" [value]="stats.total" icon="receipt_long" color="blue" />
+        <app-stat-card [label]="'order.status.PENDING' | translate" [value]="stats.pending" icon="hourglass_empty" color="gray" />
+        <app-stat-card [label]="'order.status.CONFIRMED' | translate" [value]="stats.confirmed" icon="task_alt" color="blue" />
+        <app-stat-card [label]="'order.status.SHIPPED' | translate" [value]="stats.shipped" icon="local_shipping" color="amber" />
+        <app-stat-card [label]="'order.status.DELIVERED' | translate" [value]="stats.delivered" icon="check_circle" color="teal" />
+        <app-stat-card [label]="'order.status.CANCELLED' | translate" [value]="stats.cancelled" icon="cancel" color="gray" />
+      </div>
+    }
+  </section>
+
+  <section>
+    <h2>{{ 'dashboard.sections.catalog' | translate }}</h2>
+    @if (productStats$ | async; as stats) {
+      <div class="stats-row">
+        <app-stat-card [label]="'dashboard.products.total' | translate" [value]="stats.total" icon="inventory_2" color="blue" />
+        <app-stat-card [label]="'dashboard.products.active' | translate" [value]="stats.active" icon="check_circle" color="teal" />
+        <app-stat-card [label]="'dashboard.products.lowStock' | translate" [value]="(lowStockCount$ | async) ?? 0" icon="warning" color="amber" />
+      </div>
+    }
+  </section>
+
+  <section>
+    <h2>{{ 'dashboard.sections.partners' | translate }}</h2>
+    <div class="stats-row">
+      @if (customerStats$ | async; as stats) {
+        <app-stat-card [label]="'dashboard.customers.total' | translate" [value]="stats.total" icon="people" color="blue" />
+        <app-stat-card [label]="'dashboard.customers.active' | translate" [value]="stats.active" icon="check_circle" color="teal" />
+      }
+      @if (carrierStats$ | async; as stats) {
+        <app-stat-card [label]="'dashboard.carriers.total' | translate" [value]="stats.total" icon="local_shipping" color="blue" />
+        <app-stat-card [label]="'dashboard.carriers.active' | translate" [value]="stats.active" icon="check_circle" color="teal" />
+      }
+    </div>
+  </section>
+
+  @if (isAdmin$ | async) {
+    <section>
+      <h2>{{ 'dashboard.sections.staff' | translate }}</h2>
+      @if (userStats$ | async; as stats) {
+        <div class="stats-row">
+          <app-stat-card [label]="'dashboard.users.total' | translate" [value]="stats.total" icon="people" color="blue" />
+          <app-stat-card [label]="'dashboard.users.active' | translate" [value]="stats.active" icon="check_circle" color="teal" />
+        </div>
+      }
+    </section>
+  }
+</div>

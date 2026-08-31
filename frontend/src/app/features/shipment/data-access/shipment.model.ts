@@ -18,12 +18,6 @@ export interface TrackingEvent {
   occurredAt: string;
 }
 
-export interface CreateShipmentRequest {
-  origin: string;
-  destination: string;
-  carrier: string;
-}
-
 export interface UpdateShipmentStatusRequest {
   status: string;
   location?: string;

@@ -1,7 +1,7 @@
 export interface Order {
   id: number;
   orderNumber: string;
-  customerName: string;
+  customerId: number;
   origin: string;
   destination: string;
   status: string; // PENDING | CONFIRMED | SHIPPED | DELIVERED | CANCELLED
@@ -24,12 +24,12 @@ export interface OrderItemRequest {
 }
 
 export interface CreateOrderRequest {
-  customerName: string;
+  customerId: number;
   origin: string;
   destination: string;
   items: OrderItemRequest[];
 }
 
 export interface ShipOrderRequest {
-  carrier: string;
+  carrierId: number;
 }

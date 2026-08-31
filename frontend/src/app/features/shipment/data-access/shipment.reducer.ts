@@ -26,7 +26,6 @@ export const shipmentFeature = createFeature({
 
     on(
       ShipmentActions.loadShipments,
-      ShipmentActions.createShipment,
       ShipmentActions.updateShipmentStatus,
       ShipmentActions.loadHistory,
       (state): ShipmentState => ({ ...state, loading: true, error: null }),
@@ -51,10 +50,6 @@ export const shipmentFeature = createFeature({
       loading: false,
       error,
     })),
-
-    on(ShipmentActions.createShipmentSuccess, (state, { shipment }): ShipmentState =>
-      shipmentAdapter.addOne(shipment, { ...state, loading: false }),
-    ),
 
     on(ShipmentActions.updateShipmentStatusSuccess, (state, { shipment }): ShipmentState =>
       shipmentAdapter.upsertOne(shipment, { ...state, loading: false }),
@@ -95,7 +90,6 @@ export const shipmentFeature = createFeature({
 
     on(
       ShipmentActions.loadShipmentsFailure,
-      ShipmentActions.createShipmentFailure,
       ShipmentActions.updateShipmentStatusFailure,
       ShipmentActions.loadHistoryFailure,
       ShipmentActions.deleteShipmentFailure,

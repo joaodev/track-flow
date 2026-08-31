@@ -2,7 +2,6 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
-  CreateShipmentRequest,
   Shipment,
   TrackingEvent,
   UpdateShipmentStatusRequest,
@@ -24,10 +23,6 @@ export class ShipmentService {
 
   getHistory(trackingCode: string): Observable<TrackingEvent[]> {
     return this.http.get<TrackingEvent[]>(`${this.baseUrl}/${trackingCode}/history`);
-  }
-
-  create(request: CreateShipmentRequest): Observable<Shipment> {
-    return this.http.post<Shipment>(this.baseUrl, request);
   }
 
   updateStatus(trackingCode: string, request: UpdateShipmentStatusRequest): Observable<Shipment> {

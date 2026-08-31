@@ -4,8 +4,7 @@ import { Store } from '@ngrx/store';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { ShipmentTableComponent } from '../../ui/shipment-table/shipment-table.component';
-import { StatCardComponent } from '../../ui/stat-card/stat-card.component';
-import { CreateShipmentFormComponent } from '../../ui/create-shipment-form/create-shipment-form.component';
+import { StatCardComponent } from '../../../../shared/stat-card/stat-card.component';
 import { UpdateStatusFormComponent } from '../../ui/update-status-form/update-status-form.component';
 import { ShipmentDetailDialogComponent } from '../../ui/shipment-detail-dialog/shipment-detail-dialog.component';
 import { ShipmentActions } from '../../data-access/shipment.actions';
@@ -16,7 +15,6 @@ import {
   selectShipmentStats,
 } from '../../data-access/shipment.selectors';
 import {
-  CreateShipmentRequest,
   Shipment,
   UpdateShipmentStatusRequest,
 } from '../../data-access/shipment.model';
@@ -45,16 +43,6 @@ export class ShipmentListComponent implements OnInit {
 
   ngOnInit(): void {
     this.store.dispatch(ShipmentActions.loadShipments());
-  }
-
-  onOpenCreateForm(): void {
-    const dialogRef = this.dialog.open(CreateShipmentFormComponent, { width: '420px' });
-
-    dialogRef.afterClosed().subscribe((request: CreateShipmentRequest | undefined) => {
-      if (request) {
-        this.store.dispatch(ShipmentActions.createShipment({ request }));
-      }
-    });
   }
 
   onUpdateStatus(shipment: Shipment): void {

@@ -1,0 +1,25 @@
+<h2 mat-dialog-title>{{ (isEditMode ? 'carrier.form.editTitle' : 'carrier.form.createTitle') | translate }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div mat-dialog-content>
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'carrier.form.nameLabel' | translate }}</mat-label>
+      <input matInput formControlName="name" />
+      @if (form.controls.name.invalid && form.controls.name.touched) {
+        <mat-error>{{ 'carrier.form.nameError' | translate }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'carrier.form.contactLabel' | translate }}</mat-label>
+      <input matInput formControlName="contactInfo" />
+    </mat-form-field>
+  </div>
+
+  <div mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="onCancel()">{{ 'common.cancel' | translate }}</button>
+    <button mat-raised-button color="primary" type="submit">
+      {{ (isEditMode ? 'carrier.form.submitUpdate' : 'carrier.form.submitCreate') | translate }}
+    </button>
+  </div>
+</form>
