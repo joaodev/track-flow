@@ -125,6 +125,11 @@ public class ShipmentService {
         return shipmentRepository.findByDeletedFalseOrderByCreatedAtDesc();
     }
 
+    public Shipment findById(Long id) {
+        return shipmentRepository.findByIdAndDeletedFalse(id)
+                .orElseThrow(() -> new ShipmentNotFoundException("id: " + id));
+    }
+
     private String generateTrackingCode() {
         return "TF" + UUID.randomUUID().toString().substring(0, 10).toUpperCase().replace("-", "");
     }

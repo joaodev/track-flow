@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface ShipmentRepository extends JpaRepository<Shipment, Long> {
     Optional<Shipment> findByTrackingCodeAndDeletedFalse(String trackingCode);
     List<Shipment> findByDeletedFalseOrderByCreatedAtDesc();
+    Optional<Shipment> findByIdAndDeletedFalse(Long id);
 }

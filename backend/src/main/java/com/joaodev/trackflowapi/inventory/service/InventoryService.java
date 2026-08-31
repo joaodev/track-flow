@@ -72,6 +72,42 @@ public class InventoryService {
         return saved;
     }
 
+    @Transactional
+    public Inventory reserve(Long productId, int quantity) {
+        Inventory inventory = findByProductId(productId);
+
+        if (inventory.getAvailableQuantity() < quantity) {
+            throw new InsufficientStockException(productId);
+        }
+
+        inventory.setQuantityReserved(inventory.getQuantityReserved() + quantity);
+        inventory.setUpdatedAt(LocalDateTime.now());
+
+        Inventory saved = inventoryRepository.save(inventory);
+        publishLowStockIfNeeded(saved);
+        return saved;
+    }
+
+    @Transactional
+    public Inventory release(Long productId, int quantity) {
+        Inventory inventory = findByProductId(productId);
+        inventory.setQuantityReserved(Math.max(0, inventory.getQuantityReserved() - quantity));
+        inventory.setUpdatedAt(LocalDateTime.now());
+        return inventoryRepository.save(inventory);
+    }
+
+    @Transactional
+    public Inventory fullFill(Long productId, int quantity) {
+        Inventory inventory = findByProductId(productId);
+        inventory.setQuantityOnHand(inventory.getQuantityOnHand() - quantity);
+        inventory.setQuantityReserved(Math.max(0, inventory.getQuantityReserved() - quantity));
+        inventory.setUpdatedAt(LocalDateTime.now());
+
+        Inventory saved = inventoryRepository.save(inventory);
+        publishLowStockIfNeeded(saved);
+        return saved;
+    }
+
     public Inventory findByProductId(Long productId) {
         return inventoryRepository.findByProductId(productId)
                 .orElseThrow(() -> new InventoryNotFoundException(productId));
