@@ -1,4 +1,10 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, isDevMode, provideAppInitializer, inject } from '@angular/core';
+import {
+  ApplicationConfig,
+  provideBrowserGlobalErrorListeners,
+  isDevMode,
+  provideAppInitializer,
+  inject,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideState, provideStore } from '@ngrx/store';
@@ -19,6 +25,8 @@ import { productFeature } from './features/product/data-access/product.reducer';
 import { ProductEffects } from './features/product/data-access/product.effects';
 import { inventoryFeature } from './features/inventory/data-access/inventory.reducer';
 import { InventoryEffects } from './features/inventory/data-access/inventory.effects';
+import { orderFeature } from './features/order/data-access/order.reducer';
+import { OrderEffects } from './features/order/data-access/order.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -35,7 +43,15 @@ export const appConfig: ApplicationConfig = {
     provideState(userFeature),
     provideState(productFeature),
     provideState(inventoryFeature),
-    provideEffects(ShipmentEffects, AuthEffects, UserEffects, ProductEffects, InventoryEffects),
+    provideState(orderFeature),
+    provideEffects(
+      ShipmentEffects,
+      AuthEffects,
+      UserEffects,
+      ProductEffects,
+      InventoryEffects,
+      OrderEffects,
+    ),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
     { provide: MatPaginatorIntl, useClass: AppPaginatorIntl },
   ],

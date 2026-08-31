@@ -1,0 +1,64 @@
+<h2 mat-dialog-title>{{ 'order.form.createTitle' | translate }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div mat-dialog-content>
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'order.form.customerNameLabel' | translate }}</mat-label>
+      <input matInput formControlName="customerName" />
+      @if (form.controls.customerName.invalid && form.controls.customerName.touched) {
+        <mat-error>{{ 'order.form.customerNameError' | translate }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'order.form.originLabel' | translate }}</mat-label>
+      <input matInput formControlName="origin" />
+      @if (form.controls.origin.invalid && form.controls.origin.touched) {
+        <mat-error>{{ 'order.form.originError' | translate }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'order.form.destinationLabel' | translate }}</mat-label>
+      <input matInput formControlName="destination" />
+      @if (form.controls.destination.invalid && form.controls.destination.touched) {
+        <mat-error>{{ 'order.form.destinationError' | translate }}</mat-error>
+      }
+    </mat-form-field>
+
+    <h3>{{ 'order.form.itemsTitle' | translate }}</h3>
+
+    <div formArrayName="items">
+      @for (item of items.controls; track item; let i = $index) {
+        <div class="item-row" [formGroupName]="i">
+          <mat-form-field appearance="outline" class="item-product">
+            <mat-label>{{ 'order.form.productLabel' | translate }}</mat-label>
+            <mat-select formControlName="productId">
+              @for (product of products$ | async; track product.id) {
+                <mat-option [value]="product.id">{{ product.name }} ({{ product.sku }})</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="item-quantity">
+            <mat-label>{{ 'order.form.quantityLabel' | translate }}</mat-label>
+            <input matInput type="number" formControlName="quantity" />
+          </mat-form-field>
+
+          <button mat-icon-button type="button" (click)="removeItem(i)" [disabled]="items.length === 1">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      }
+    </div>
+
+    <button mat-stroked-button type="button" (click)="addItem()">
+      <mat-icon>add</mat-icon> {{ 'order.form.addItem' | translate }}
+    </button>
+  </div>
+
+  <div mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="onCancel()">{{ 'common.cancel' | translate }}</button>
+    <button mat-raised-button color="primary" type="submit">{{ 'order.form.submit' | translate }}</button>
+  </div>
+</form>

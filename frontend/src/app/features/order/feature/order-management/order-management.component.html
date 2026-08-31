@@ -1,0 +1,18 @@
+<div class="order-management-page">
+  <header>
+    <h1>{{ 'order.management.title' | translate }}</h1>
+    <button mat-raised-button color="primary" (click)="onOpenCreateForm()">{{ 'order.management.newOrder' | translate }}</button>
+  </header>
+
+  @if (error$ | async; as error) {
+    <p>{{ ('errors.' + error) | translate }}</p>
+  }
+
+  <app-order-table
+    [orders]="(orders$ | async) ?? []"
+    (viewDetails)="onViewDetails($event)"
+    (confirmOrder)="onConfirmOrder($event)"
+    (shipOrder)="onShipOrder($event)"
+    (cancelOrder)="onCancelOrder($event)"
+  />
+</div>

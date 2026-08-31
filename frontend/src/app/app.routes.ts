@@ -7,6 +7,7 @@ import { authGuard } from './features/auth/data-access/auth.guard';
 import { adminGuard } from './features/user/data-access/admin.guard';
 import { AppShellComponent } from './core/app-shell/app-shell.component';
 import { ProductManagementComponent } from './features/product/feature/product-management/product-management.component';
+import { OrderManagementComponent } from './features/order/feature/order-management/order-management.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -18,6 +19,7 @@ export const routes: Routes = [
       { path: '', component: ShipmentListComponent },
       { path: 'track', component: TrackShipmentComponent },
       { path: 'products', component: ProductManagementComponent },
+      { path: 'orders', component: OrderManagementComponent },
       { path: 'admin/users', component: UserManagementComponent, canActivate: [adminGuard] },
     ],
   },

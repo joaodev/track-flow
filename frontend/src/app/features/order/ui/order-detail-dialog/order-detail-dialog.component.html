@@ -1,0 +1,29 @@
+<h2 mat-dialog-title>
+  <span class="mono">{{ data.order.orderNumber }}</span>
+</h2>
+
+<div mat-dialog-content>
+  <p class="route">{{ data.order.origin }} → {{ data.order.destination }}</p>
+  <p class="customer">{{ data.order.customerName }}</p>
+
+  <span class="status-pill" [class]="'status-pill--' + data.order.status.toLowerCase()">
+    {{ ('order.status.' + data.order.status) | translate }}
+  </span>
+
+  <h3>{{ 'order.detailDialog.itemsTitle' | translate }}</h3>
+  <ul class="items-list">
+    @for (item of itemsWithProduct$ | async; track item.id) {
+      <li>
+        <span class="item-name">{{ item.productName }}</span>
+        <span class="item-qty">×{{ item.quantity }}</span>
+        <span class="item-price">{{ item.unitPriceAtOrder | localCurrency }}</span>
+      </li>
+    } @empty {
+      <li>{{ 'order.detailDialog.noItems' | translate }}</li>
+    }
+  </ul>
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>{{ 'common.close' | translate }}</button>
+</div>

@@ -24,8 +24,9 @@
     "brand": "Track Flow",
     "navTrack": "Rastrear",
     "navShipments": "Envios",
-    "navUsers": "Usuários",
     "navProducts": "Produtos",
+    "navOrders": "Pedidos",
+    "navUsers": "Usuários",
     "logout": "Sair"
   },
   "auth": {
@@ -114,6 +115,56 @@
       "message": "Tem certeza que deseja excluir o envio {{code}}? Esta ação não pode ser desfeita."
     }
   },
+  "order": {
+    "management": {
+      "title": "Pedidos",
+      "newOrder": "Novo Pedido"
+    },
+    "table": {
+      "columnNumber": "Número",
+      "columnCustomer": "Cliente",
+      "columnDestination": "Destino",
+      "columnStatus": "Status",
+      "columnCreatedAt": "Criado em",
+      "searchLabel": "Buscar",
+      "searchPlaceholder": "Número, cliente...",
+      "confirmAction": "Confirmar",
+      "shipAction": "Despachar",
+      "cancelTooltip": "Cancelar pedido",
+      "noResults": "Nenhum pedido encontrado para sua busca."
+    },
+    "status": {
+      "PENDING": "Pendente",
+      "CONFIRMED": "Confirmado",
+      "SHIPPED": "Despachado",
+      "DELIVERED": "Entregue",
+      "CANCELLED": "Cancelado"
+    },
+    "form": {
+      "createTitle": "Novo Pedido",
+      "customerNameLabel": "Cliente",
+      "customerNameError": "Nome do cliente é obrigatório",
+      "originLabel": "Origem",
+      "originError": "Origem é obrigatória",
+      "destinationLabel": "Destino",
+      "destinationError": "Destino é obrigatório",
+      "itemsTitle": "Itens",
+      "productLabel": "Produto",
+      "quantityLabel": "Quantidade",
+      "addItem": "Adicionar Item",
+      "submit": "Criar Pedido"
+    },
+    "shipForm": {
+      "title": "Despachar Pedido",
+      "carrierLabel": "Transportadora",
+      "carrierError": "Transportadora é obrigatória",
+      "submit": "Despachar"
+    },
+    "detailDialog": {
+      "itemsTitle": "Itens",
+      "noItems": "Nenhum item neste pedido."
+    }
+  },
   "product": {
     "management": {
       "title": "Produtos",
@@ -123,14 +174,18 @@
       "columnSku": "SKU",
       "columnName": "Nome",
       "columnPrice": "Preço",
-      "columnStatus": "Status",
       "columnStock": "Estoque",
-      "adjustStockTooltip": "Ajustar estoque",
+      "columnStatus": "Status",
       "searchLabel": "Buscar",
       "searchPlaceholder": "SKU, nome...",
       "editTooltip": "Editar produto",
-      "noResults": "Nenhum produto encontrado para sua busca.",
-      "deleteTooltip": "Excluir produto"
+      "adjustStockTooltip": "Ajustar estoque",
+      "deleteTooltip": "Excluir produto",
+      "noResults": "Nenhum produto encontrado para sua busca."
+    },
+    "deleteConfirm": {
+      "title": "Excluir produto",
+      "message": "Tem certeza que deseja excluir o produto {{name}}? Esta ação não pode ser desfeita."
     },
     "form": {
       "createTitle": "Novo Produto",
@@ -145,10 +200,6 @@
       "initialQuantityLabel": "Quantidade Inicial",
       "submitCreate": "Criar Produto",
       "submitUpdate": "Salvar Alterações"
-    },
-    "deleteConfirm": {
-      "title": "Excluir produto",
-      "message": "Tem certeza que deseja excluir o produto {{name}}? Esta ação não pode ser desfeita."
     }
   },
   "inventory": {
@@ -210,6 +261,9 @@
     "INSUFFICIENT_STOCK": "Ajuste deixaria o estoque negativo",
     "STOCK_CONFLICT": "Esse estoque foi atualizado por outra pessoa ao mesmo tempo. Tente novamente.",
     "ACCESS_DENIED": "Você não tem permissão para realizar esta ação",
-    "UNAUTHENTICATED": "Autenticação necessária para acessar este recurso"
+    "UNAUTHENTICATED": "Autenticação necessária para acessar este recurso",
+    "ORDER_NOT_FOUND": "Pedido não encontrado",
+    "INVALID_ORDER_STATUS": "O pedido não está no status necessário para essa ação",
+    "PRODUCT_NOT_ORDERABLE": "Este produto não está disponível para pedidos"
   }
 }

@@ -30,6 +30,10 @@ html {
   --status-in-transit: #f4c542;
   --status-delivered: #17c3b2;
   --status-cancelled: #ef5673;
+
+  --status-pending: var(--card-gray);
+  --status-confirmed: var(--card-blue);
+  --status-shipped: var(--card-amber);
 }
 
 body {
@@ -61,4 +65,49 @@ table.mat-mdc-table .mat-mdc-header-row {
 
 .mat-mdc-cell {
   border-bottom-color: var(--border) !important;
+}
+
+.status-pill {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.status-pill--created {
+  background: color-mix(in srgb, var(--status-created) 20%, transparent);
+  color: var(--status-created);
+}
+
+.status-pill--in_transit {
+  background: color-mix(in srgb, var(--status-in-transit) 20%, transparent);
+  color: var(--status-in-transit);
+}
+
+.status-pill--delivered {
+  background: color-mix(in srgb, var(--status-delivered) 20%, transparent);
+  color: var(--status-delivered);
+}
+
+.status-pill--cancelled {
+  background: color-mix(in srgb, var(--status-cancelled) 20%, transparent);
+  color: var(--status-cancelled);
+}
+
+.status-pill--pending {
+  background: color-mix(in srgb, var(--status-pending) 20%, transparent);
+  color: var(--status-pending);
+}
+
+.status-pill--confirmed {
+  background: color-mix(in srgb, var(--status-confirmed) 20%, transparent);
+  color: var(--status-confirmed);
+}
+
+.status-pill--shipped {
+  background: color-mix(in srgb, var(--status-shipped) 20%, transparent);
+  color: var(--status-shipped);
 }

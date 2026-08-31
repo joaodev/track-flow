@@ -1,0 +1,35 @@
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+div[mat-dialog-content] {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 60vh;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+h3 {
+  margin: 8px 0 4px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.item-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.item-product {
+  flex: 2;
+}
+
+.item-quantity {
+  flex: 1;
+}

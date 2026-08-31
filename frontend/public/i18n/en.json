@@ -24,8 +24,9 @@
     "brand": "Track Flow",
     "navTrack": "Track",
     "navShipments": "Shipments",
-    "navUsers": "Users",
     "navProducts": "Products",
+    "navOrders": "Orders",
+    "navUsers": "Users",
     "logout": "Log Out"
   },
   "auth": {
@@ -114,6 +115,56 @@
       "message": "Are you sure you want to delete shipment {{code}}? This cannot be undone."
     }
   },
+  "order": {
+    "management": {
+      "title": "Orders",
+      "newOrder": "New Order"
+    },
+    "table": {
+      "columnNumber": "Number",
+      "columnCustomer": "Customer",
+      "columnDestination": "Destination",
+      "columnStatus": "Status",
+      "columnCreatedAt": "Created At",
+      "searchLabel": "Search",
+      "searchPlaceholder": "Number, customer...",
+      "confirmAction": "Confirm",
+      "shipAction": "Ship",
+      "cancelTooltip": "Cancel order",
+      "noResults": "No orders match your search."
+    },
+    "status": {
+      "PENDING": "Pending",
+      "CONFIRMED": "Confirmed",
+      "SHIPPED": "Shipped",
+      "DELIVERED": "Delivered",
+      "CANCELLED": "Cancelled"
+    },
+    "form": {
+      "createTitle": "New Order",
+      "customerNameLabel": "Customer",
+      "customerNameError": "Customer name is required",
+      "originLabel": "Origin",
+      "originError": "Origin is required",
+      "destinationLabel": "Destination",
+      "destinationError": "Destination is required",
+      "itemsTitle": "Items",
+      "productLabel": "Product",
+      "quantityLabel": "Quantity",
+      "addItem": "Add Item",
+      "submit": "Create Order"
+    },
+    "shipForm": {
+      "title": "Ship Order",
+      "carrierLabel": "Carrier",
+      "carrierError": "Carrier is required",
+      "submit": "Ship"
+    },
+    "detailDialog": {
+      "itemsTitle": "Items",
+      "noItems": "No items in this order."
+    }
+  },
   "product": {
     "management": {
       "title": "Products",
@@ -123,14 +174,18 @@
       "columnSku": "SKU",
       "columnName": "Name",
       "columnPrice": "Price",
-      "columnStatus": "Status",
       "columnStock": "Stock",
-      "adjustStockTooltip": "Adjust stock",
+      "columnStatus": "Status",
       "searchLabel": "Search",
       "searchPlaceholder": "SKU, name...",
       "editTooltip": "Edit product",
-      "noResults": "No products match your search.",
-      "deleteTooltip": "Delete product"
+      "adjustStockTooltip": "Adjust stock",
+      "deleteTooltip": "Delete product",
+      "noResults": "No products match your search."
+    },
+    "deleteConfirm": {
+      "title": "Delete product",
+      "message": "Are you sure you want to delete {{name}}? This cannot be undone."
     },
     "form": {
       "createTitle": "New Product",
@@ -141,14 +196,10 @@
       "nameError": "Name is required",
       "descriptionLabel": "Description",
       "priceLabel": "Unit Price",
-      "initialQuantityLabel": "Initial Quantity",
       "priceError": "Enter a valid price",
+      "initialQuantityLabel": "Initial Quantity",
       "submitCreate": "Create Product",
       "submitUpdate": "Save Changes"
-    },
-    "deleteConfirm": {
-      "title": "Delete product",
-      "message": "Are you sure you want to delete {{name}}? This cannot be undone."
     }
   },
   "inventory": {
@@ -210,6 +261,9 @@
     "INSUFFICIENT_STOCK": "This adjustment would take stock below zero",
     "STOCK_CONFLICT": "This inventory record was updated by someone else at the same time. Please retry.",
     "ACCESS_DENIED": "You don't have permission to perform this action",
-    "UNAUTHENTICATED": "Authentication is required to access this resource"
+    "UNAUTHENTICATED": "Authentication is required to access this resource",
+    "ORDER_NOT_FOUND": "Order not found",
+    "INVALID_ORDER_STATUS": "The order isn't in the required status for this action",
+    "PRODUCT_NOT_ORDERABLE": "This product isn't available for ordering"
   }
 }
