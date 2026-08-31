@@ -63,22 +63,23 @@ No frontend, serviços de WebSocket dedicados alimentam a store NgRx diretamente
 
 ```
 track-flow/
-  backend/     API Spring Boot
-  frontend/    Aplicação Angular
+  backend/                    API Spring Boot (com seu próprio Dockerfile)
+  frontend/                   Aplicação Angular (com seu próprio Dockerfile + nginx.conf)
+  docker-compose.yml          Sobe Postgres + backend + frontend juntos
+  .env.example                Modelo das variáveis usadas pelo docker-compose.yml
+  .github/workflows/ci.yml    Pipeline de CI (build/test do backend e do frontend)
 ```
 
 ## Rodando Localmente
 
-### 1. Backend
+Todo o ambiente — Postgres, backend e frontend — sobe com um único comando via Docker Compose, sem precisar instalar Java, Maven, Node ou Angular CLI na máquina.
 
 ```bash
-cd backend
-cp .env.example .env   # preencha credenciais do banco e JWT_SECRET (openssl rand -base64 32)
-docker compose up -d   # sobe o PostgreSQL
-./mvnw spring-boot:run
+cp .env.example .env   # preencha DB_NAME, DB_USER, DB_PASSWORD e JWT_SECRET (openssl rand -base64 32)
+docker compose up --build
 ```
 
-O Flyway aplica todas as migrations na inicialização, incluindo uma conta de admin já semeada:
+Abre `http://localhost:4200`. O frontend (servido por nginx dentro do próprio container) encaminha `/api` e `/ws` internamente pro container do backend — não precisa configurar proxy nem CORS na mão. O backend aplica todas as migrations do Flyway automaticamente na inicialização, incluindo uma conta de admin já semeada:
 
 ```
 email:    admin@trackflow.dev
@@ -87,17 +88,12 @@ password: ChangeMe123!
 
 Troque essa senha imediatamente fora de ambiente de desenvolvimento local.
 
-**Dados de demonstração (opcional):** `mock-data.sql`, na raiz do repositório, popula um banco vazio com um cenário realista — 8 clientes, 5 transportadoras, 15 produtos (com estoque propositalmente baixo em alguns, pra ver o alerta disparar), 12 pedidos cobrindo todos os status, e os envios/históricos correspondentes. Roda direto contra o Postgres (`psql`, DBeaver, etc.) depois que as migrations já tiverem sido aplicadas ao menos uma vez. Não é uma migration Flyway — é só um script solto pra facilitar demonstração.
-
-### 2. Frontend
+Pra derrubar o ambiente:
 
 ```bash
-cd frontend
-npm install
-ng serve
+docker compose down          # para os containers, mantém os dados do Postgres
+docker compose down -v       # também apaga o volume do banco, começando do zero na próxima subida
 ```
-
-Abra `http://localhost:4200`. O dev server da Angular CLI faz proxy de `/api` e `/ws` para o backend em `localhost:8080` (ver `frontend/proxy.conf.json`), então não é necessária configuração de CORS em desenvolvimento.
 
 ## Tour de Funcionalidades
 
@@ -270,6 +266,14 @@ A aplicação suporta português (padrão), inglês e espanhol, alternáveis em 
   - Os dois listeners assíncronos de eventos cross-module (`product → inventory`, `shipment → order`), com polling nos testes já que ambos rodam `@Async`.
   - Um teste de WebSocket ponta a ponta pra cada um dos dois tópicos (`shipments/{trackingCode}` e `inventory/low-stock`).
 - **Frontend:** ainda não há suíte de testes automatizada — um próximo passo natural para este projeto. Até lá, mudanças são verificadas manualmente: alterne os idiomas pelo toggle da sidebar e percorra cada tela, e dispare cada `errorCode` da tabela acima para confirmar que a mensagem localizada aparece em vez do código cru ou de um texto desatualizado.
+
+## Integração Contínua
+
+`.github/workflows/ci.yml` roda em todo push/PR pra `main`, em três jobs sequenciais:
+
+1. **`backend`** — `./mvnw verify`, disparando a suíte de testes de integração inteira via Testcontainers (os runners do GitHub Actions já vêm com Docker instalado, sem configuração extra necessária).
+2. **`frontend`** — `npm ci` + `npm run build`, garantindo que o build de produção não quebra.
+3. **`docker-build`** — só roda depois que os dois anteriores passarem; constrói as duas imagens Docker (backend e frontend) pra validar que os `Dockerfile`s continuam funcionando, sem publicar em nenhum registry.
 
 ## Licença
 
